@@ -1,0 +1,33 @@
+# Windows & système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs, cache, temp
+*.log
+*.tmp
+*.bak
+.cache/
+temp/
+logs/
+
+# WAMP ou environnement local
+wamp64/
+xampp/
+.env
+
+# Éditeurs de code
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node (si un jour tu fais du JS avancé)
+node_modules/
+
+# Composer (si tu ajoutes des libs PHP plus tard)
+vendor/
+
+# Dossiers à usage perso
+sql/backups/
+docs/perso/
