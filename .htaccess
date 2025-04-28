@@ -1,2 +1,9 @@
-# Redirection automatique vers frontend/index.html
-DirectoryIndex frontend/index.html
+# Activer le moteur de réécriture d'URL
+RewriteEngine On
+
+# Si la requête est pour un fichier ou dossier existant, ne rien faire
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rediriger tout vers frontend/
+RewriteRule ^(.*)$ frontend/$1 [L]
