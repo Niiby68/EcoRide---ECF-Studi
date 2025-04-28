@@ -31,3 +31,6 @@ vendor/
 # Dossiers à usage perso
 sql/backups/
 docs/perso/
+
+# Fichiers personnels de projet
+EcoRide.xml

@@ -1,0 +1,2 @@
+# Redirection automatique vers frontend/index.html
+DirectoryIndex frontend/index.html
