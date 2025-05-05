@@ -1,7 +1,7 @@
 <!--
-	Formulaire d'Inscription
-	
-	Chemin : /frontend/signup.php
+	Formulaire de Connexion
+
+	Chemin : /frontend/login.php
 -->
 
 <!DOCTYPE html>
@@ -9,7 +9,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>EcoRide - Inscription</title>
+	<title>EcoRide - Connexion</title>
 
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,11 +17,11 @@
 	<!-- Feuille de style locale -->
 	<link rel="stylesheet" href="css/style.css">
 
-	<!-- Bootstrap JS (non bloquant) -->
+	<!-- Bootstrap JS -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 
 	<!-- JS pour AJAX -->
-	<script src="js/signup.js" defer></script>
+	<script src="js/login.js" defer></script>
 </head>
 
 <body>
@@ -29,8 +29,8 @@
 		<nav>
 			<ul class="nav">
 				<li class="nav-item"><a href="index.html" class="nav-link">Accueil</a></li>
-				<li class="nav-item"><a href="signup.php" class="nav-link active">Inscription</a></li>
-				<li class="nav-item"><a href="login.php" class="nav-link">Connexion</a></li>
+				<li class="nav-item"><a href="signup.php" class="nav-link">Inscription</a></li>
+				<li class="nav-item"><a href="login.php" class="nav-link active">Connexion</a></li>
 			</ul>
 		</nav>
 	</header>
@@ -40,25 +40,20 @@
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="index.html">Accueil</a></li>
-				<li class="breadcrumb-item active" aria-current="page">Inscription</li>
+				<li class="breadcrumb-item active" aria-current="page">Connexion</li>
 			</ol>
 		</nav>
 	</div>
 
 	<main class="container">
-		<h1 class="mb-4">Inscription sur EcoRide</h1>
-		
+		<h1 class="mb-4">Connexion à EcoRide</h1>
+
 		<div id="form-message" class="alert d-none alert-dismissible fade show" role="alert">
 			<span id="form-message-text"></span>
 			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
 		</div>
 
-		<form id="form-inscription" method="post">
-			<div class="mb-3">
-				<label for="pseudo" class="form-label">Pseudo</label>
-				<input type="text" class="form-control" id="pseudo" name="pseudo" required>
-			</div>
-
+		<form id="form-login" method="post">
 			<div class="mb-3">
 				<label for="email" class="form-label">Adresse email</label>
 				<input type="email" class="form-control" id="email" name="email" required>
@@ -69,16 +64,7 @@
 				<input type="password" class="form-control" id="mot_de_passe" name="mot_de_passe" required>
 			</div>
 
-			<div class="mb-3">
-				<label for="role" class="form-label">Rôle</label>
-				<select class="form-select" id="role" name="role" required>
-					<option value="passager">Passager</option>
-					<option value="chauffeur">Chauffeur</option>
-					<option value="les_deux">Les deux</option>
-				</select>
-			</div>
-
-			<button type="submit" class="btn btn-primary">S'inscrire</button>
+			<button type="submit" class="btn btn-primary">Se connecter</button>
 		</form>
 	</main>
 

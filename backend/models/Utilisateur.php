@@ -4,6 +4,7 @@
 //
 //	/backend/models/Utilisateur.php
 //
+
 class Utilisateur {
 	private $pseudo;
 	private $email;
@@ -63,17 +64,49 @@ class Utilisateur {
 
 	// Check if a user already exists by email
 	public function is_user_exist(PDO $pdo) {
-		$sql = "SELECT COUNT(*) FROM utilisateurs WHERE email = ?";
+		$sql = "SELECT COUNT(*) FROM utilisateurs WHERE email = :email";
 		$stmt = $pdo->prepare($sql);
-		$stmt->execute([$this->email]);
+		$stmt->execute([':email' => $this->email]);
+		return $stmt->fetchColumn() > 0;
+	}
+	
+	// Check if a user already exists by pseudo
+	public function is_pseudo_exist(PDO $pdo) {
+		$sql = "SELECT COUNT(*) FROM utilisateurs WHERE pseudo = :pseudo";
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute([':pseudo' => $this->pseudo]);
 		return $stmt->fetchColumn() > 0;
 	}
 
 	// Add the current user to the database
 	public function add_user(PDO $pdo) {
-		$sql = "INSERT INTO utilisateurs (pseudo, email, mot_de_passe, role) VALUES (?, ?, ?, ?)";
+		$sql = "INSERT INTO utilisateurs (pseudo, email, mot_de_passe, role) 
+		        VALUES (:pseudo, :email, :motdepasse, :role)";
 		$stmt = $pdo->prepare($sql);
 		$hash = password_hash($this->motdepasse, PASSWORD_DEFAULT);
-		return $stmt->execute([$this->pseudo, $this->email, $hash, $this->role]);
+		return $stmt->execute([
+			':pseudo'     => $this->pseudo,
+			':email'      => $this->email,
+			':motdepasse' => $hash,
+			':role'       => $this->role
+		]);
+	}
+	
+	// Load a user by their email
+	public function load_user_by_email(PDO $pdo) {
+		$sql = "SELECT * FROM utilisateurs WHERE email = :email";
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute([':email' => $this->email]);
+		$data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+		if ($data) {
+			$this->pseudo = $data['pseudo'];
+			$this->motdepasse = $data['mot_de_passe'];
+			$this->role = $data['role'];
+			return $data;
+		}
+
+		return false;
 	}
 }
+?>

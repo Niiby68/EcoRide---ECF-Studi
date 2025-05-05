@@ -1,38 +1,60 @@
 <!--
 	Page d'accueil
-	
-	/frontend/index.html
+
+	Chemin : /frontend/index.html
 -->
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>EcoRide - Plateforme de covoiturage écoresponsable</title>
+	<title>EcoRide - Accueil</title>
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Feuille de style locale -->
 	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 
 <body>
-	<header>
+	<header class="container mt-3">
 		<nav>
-			<ul>
-				<li><a href="index.html">Accueil</a></li>
-				<li><a href="signup.php">Inscription</a></li>
+			<ul class="nav">
+				<li class="nav-item"><a href="index.html" class="nav-link active">Accueil</a></li>
+				<li class="nav-item"><a href="signup.php" class="nav-link">Inscription</a></li>
+				<li class="nav-item"><a href="login.php" class="nav-link">Connexion</a></li>
 			</ul>
 		</nav>
-		
-		<h1>Bienvenue sur EcoRide</h1>
-		<p>La plateforme de covoiturage écoresponsable</p>
 	</header>
 
-	<main>
-		<section>
-			<h2>Commencez votre aventure</h2>
-			<p>Inscrivez-vous, proposez ou réservez un trajet.</p>
-		</section>
+	<!-- Fil d’Ariane -->
+	<div class="container">
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item active" aria-current="page">Accueil</li>
+			</ol>
+		</nav>
+	</div>
+
+	<main class="container">
+		<h1 class="mb-4">Bienvenue sur EcoRide</h1>
+
+		<div class="card">
+			<div class="card-body">
+				<h2 class="card-title">La plateforme de covoiturage écoresponsable</h2>
+				<p class="card-text">Inscrivez-vous, proposez ou réservez un trajet, et contribuez à un transport plus durable.</p>
+				<a href="signup.php" class="btn btn-primary me-2 pb-2">S'inscrire</a>
+				<a href="login.php" class="btn btn-primary pb-2">Se connecter</a>
+			</div>
+		</div>
 	</main>
 
-	<footer>
+	<footer class="text-center mt-5 mb-3">
 		<p>&copy; 2025 EcoRide - Tous droits réservés.</p>
 	</footer>
 </body>

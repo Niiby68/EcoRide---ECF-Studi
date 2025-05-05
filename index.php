@@ -1,9 +1,10 @@
 <?php
 //
-//	Redirection vers la page d'accueil : frontend/index.html
+//	Redirection vers la page d'accueil
 //
-//	Répertoire racine
+//	Chemin : Répertoire racine
 //
+
 header( "Location: frontend/index.html" );
 exit;
 ?>
