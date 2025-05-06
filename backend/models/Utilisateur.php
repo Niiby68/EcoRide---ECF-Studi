@@ -9,6 +9,7 @@ class Utilisateur {
 	private $pseudo;
 	private $email;
 	private $motdepasse;
+	private $hashpass;
 	private $role;
 
 	// ======= SETTERS =======
@@ -54,6 +55,10 @@ class Utilisateur {
 
 	public function get_password() {
 		return $this->motdepasse;
+	}
+	
+	public function get_hashpass() {
+		return $this->hashpass;
 	}
 
 	public function get_role() {
@@ -101,7 +106,7 @@ class Utilisateur {
 
 		if ($data) {
 			$this->pseudo = $data['pseudo'];
-			$this->motdepasse = $data['mot_de_passe'];
+			$this->hashpass = $data['mot_de_passe'];
 			$this->role = $data['role'];
 			return $data;
 		}
