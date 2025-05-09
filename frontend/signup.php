@@ -1,8 +1,16 @@
-<!--
-	Formulaire d'Inscription
-	
-	Chemin : /frontend/signup.php
--->
+<?php
+//
+//	Formulaire d'Inscription
+//
+//	Chemin : /frontend/signup.php
+//
+
+session_start();
+if (isset($_SESSION['user_id'])) {
+	header('Location: index.php');
+	exit;
+}
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -25,10 +33,19 @@
 </head>
 
 <body>
+	<noscript>
+	  <div class="container">
+		<div class="alert alert-warning text-center my-4" role="alert">
+		  <strong>Attention :</strong> JavaScript est désactivé dans votre navigateur.  
+		  Le site fonctionnera en mode simplifié, mais certaines fonctionnalités seront limitées.
+		</div>
+	  </div>
+	</noscript>
+	
 	<header class="container mt-3">
 		<nav>
 			<ul class="nav">
-				<li class="nav-item"><a href="index.html" class="nav-link">Accueil</a></li>
+				<li class="nav-item"><a href="index.php" class="nav-link">Accueil</a></li>
 				<li class="nav-item"><a href="signup.php" class="nav-link active">Inscription</a></li>
 				<li class="nav-item"><a href="login.php" class="nav-link">Connexion</a></li>
 			</ul>
@@ -39,7 +56,7 @@
 	<div class="container">
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="index.html">Accueil</a></li>
+				<li class="breadcrumb-item"><a href="index.php">Accueil</a></li>
 				<li class="breadcrumb-item active" aria-current="page">Inscription</li>
 			</ol>
 		</nav>
@@ -50,10 +67,10 @@
 		
 		<div id="form-message" class="alert d-none alert-dismissible fade show" role="alert">
 			<span id="form-message-text"></span>
-			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+			<button type="button" class="btn-close pb-2" data-bs-dismiss="alert" aria-label="Fermer"></button>
 		</div>
 
-		<form id="form-inscription" method="post">
+		<form id="form-inscription" method="post" action="../backend/signup_traitement.php">
 			<div class="mb-3">
 				<label for="pseudo" class="form-label">Pseudo</label>
 				<input type="text" class="form-control" id="pseudo" name="pseudo" required>
@@ -78,7 +95,7 @@
 				</select>
 			</div>
 
-			<button type="submit" class="btn btn-primary">S'inscrire</button>
+			<button type="submit" class="btn btn-primary pb-2">S'inscrire</button>
 		</form>
 	</main>
 

@@ -1,8 +1,16 @@
-<!--
-	Formulaire de Connexion
+<?php
+//
+//	Formulaire de Connexion
+//
+//	Chemin : /frontend/login.php
+//
 
-	Chemin : /frontend/login.php
--->
+session_start();
+if (isset($_SESSION['user_id'])) {
+	header('Location: index.php');
+	exit;
+}
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -25,10 +33,27 @@
 </head>
 
 <body>
+	<noscript>
+	  <div class="container">
+		<div class="alert alert-warning text-center my-4" role="alert">
+		  <strong>Attention :</strong> JavaScript est désactivé dans votre navigateur.  
+		  Le site fonctionnera en mode simplifié, mais certaines fonctionnalités seront limitées.
+		</div>
+	  </div>
+	</noscript>
+	
+	<?php 
+	if (isset($_GET['success'])) {
+		echo '<div class="alert alert-success text-center m-3">';
+		echo 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
+		echo '</div>';
+	}
+	?>
+	
 	<header class="container mt-3">
 		<nav>
 			<ul class="nav">
-				<li class="nav-item"><a href="index.html" class="nav-link">Accueil</a></li>
+				<li class="nav-item"><a href="index.php" class="nav-link">Accueil</a></li>
 				<li class="nav-item"><a href="signup.php" class="nav-link">Inscription</a></li>
 				<li class="nav-item"><a href="login.php" class="nav-link active">Connexion</a></li>
 			</ul>
@@ -39,7 +64,7 @@
 	<div class="container">
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="index.html">Accueil</a></li>
+				<li class="breadcrumb-item"><a href="index.php">Accueil</a></li>
 				<li class="breadcrumb-item active" aria-current="page">Connexion</li>
 			</ol>
 		</nav>
@@ -50,10 +75,10 @@
 
 		<div id="form-message" class="alert d-none alert-dismissible fade show" role="alert">
 			<span id="form-message-text"></span>
-			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+			<button type="button" class="btn-close pb-2" data-bs-dismiss="alert" aria-label="Fermer"></button>
 		</div>
 
-		<form id="form-login" method="post">
+		<form id="form-login" method="post" action="../backend/login_traitement.php">
 			<div class="mb-3">
 				<label for="email" class="form-label">Adresse email</label>
 				<input type="email" class="form-control" id="email" name="email" required>
@@ -64,7 +89,7 @@
 				<input type="password" class="form-control" id="mot_de_passe" name="mot_de_passe" required>
 			</div>
 
-			<button type="submit" class="btn btn-primary">Se connecter</button>
+			<button type="submit" class="btn btn-primary pb-2">Se connecter</button>
 		</form>
 	</main>
 

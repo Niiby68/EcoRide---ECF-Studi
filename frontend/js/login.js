@@ -1,44 +1,38 @@
 //
-// Moteur Javascript pour login.php
+//	Moteur Javascript pour login.php
 //
-// Chemin : /frontend/js/login.js
+//	Chemin : /frontend/js/login.js
 //
 
-document.addEventListener('DOMContentLoaded', function () {
-	const form = document.getElementById('form-login');
-	const messageBox = document.getElementById('form-message');
-	const messageText = document.getElementById('form-message-text');
+document.addEventListener('DOMContentLoaded', () => {
+  const form       = document.getElementById('form-login');
+  const messageBox = document.getElementById('form-message');
+  const messageTxt = document.getElementById('form-message-text');
 
-	form.addEventListener('submit', function (e) {
-		e.preventDefault();
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const formData = new FormData(form);
 
-		const formData = new FormData(form);
-
-		fetch('../backend/login_traitement.php', {
-			method: 'POST',
-			body: formData
-		})
-		.then(response => response.json())
-		.then(data => {
-			messageBox.classList.remove('d-none', 'alert-success', 'alert-danger');
-
-			if (data.success) {
-				messageBox.classList.add('alert-success');
-				messageText.textContent = data.message;
-
-				// Redirection après succès (ex. tableau de bord)
-				setTimeout(() => {
-					window.location.href = 'index.html';
-				}, 1500);
-			} else {
-				messageBox.classList.add('alert-danger');
-				messageText.textContent = data.message;
-			}
-		})
-		.catch(error => {
-			messageBox.classList.remove('d-none', 'alert-success');
-			messageBox.classList.add('alert-danger');
-			messageText.textContent = "Erreur réseau, veuillez réessayer.";
-		});
-	});
+    fetch('/backend/login_traitement.php', {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      messageBox.classList.remove('d-none', 'alert-success', 'alert-danger');
+      if (data.success) {
+        messageBox.classList.add('alert-success');
+        messageTxt.textContent = data.message;
+        setTimeout(() => { window.location.href = 'index.php'; }, 1500);
+      } else {
+        messageBox.classList.add('alert-danger');
+        messageTxt.textContent = data.message;
+      }
+    })
+    .catch(err => {
+      console.error('Erreur AJAX :', err);
+      window.location.href = 'index.php';
+    });
+  });
 });

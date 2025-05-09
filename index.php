@@ -5,6 +5,6 @@
 //	Chemin : Répertoire racine
 //
 
-header( "Location: frontend/index.html" );
+header( "Location: frontend/index.php" );
 exit;
 ?>
