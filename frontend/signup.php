@@ -5,6 +5,8 @@
 //	Chemin : /frontend/signup.php
 //
 
+
+
 session_start();
 if (isset($_SESSION['user_id'])) {
 	header('Location: index.php');
@@ -12,12 +14,23 @@ if (isset($_SESSION['user_id'])) {
 }
 ?>
 
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>EcoRide - Inscription</title>
+	
+	<!-- Chargement complet des familles Roboto et Lora via Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?
+		family=Roboto:ital,wght@0,100..900;1,100..900&
+		family=Lora:ital,wght@0,400..700;1,400..700&
+		display=swap"
+	rel="stylesheet">
 
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -43,13 +56,16 @@ if (isset($_SESSION['user_id'])) {
 	</noscript>
 	
 	<header class="container mt-3">
-		<nav>
-			<ul class="nav">
-				<li class="nav-item"><a href="index.php" class="nav-link">Accueil</a></li>
-				<li class="nav-item"><a href="signup.php" class="nav-link active">Inscription</a></li>
-				<li class="nav-item"><a href="login.php" class="nav-link">Connexion</a></li>
-			</ul>
-		</nav>
+		<div class="container d-flex align-items-center py-3">
+			<nav class="ms-auto">
+				<ul class="nav">
+				<img src="/assets/logo/logo.png" alt="Logo EcoRide" height="50">
+					<li class="nav-item"><a href="index.php" class="nav-link">Accueil</a></li>
+					<li class="nav-item"><a href="signup.php" class="nav-link active">Inscription</a></li>
+					<li class="nav-item"><a href="login.php" class="nav-link">Connexion</a></li>
+				</ul>
+			</nav>
+		</div>
 	</header>
 
 	<!-- Fil d’Ariane -->

@@ -5,8 +5,12 @@
 //	Chemin : /backend/login_traitement.php
 //
 
+
+
 session_start();
 require_once 'models/Utilisateur.php';
+
+
 
 // Détection de l’AJAX
 $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])

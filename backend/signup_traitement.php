@@ -5,7 +5,11 @@
 //	Chemin : /backend/signup_traitement.php
 //
 
+
+
 session_start();
+
+
 
 // Détection AJAX
 $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';

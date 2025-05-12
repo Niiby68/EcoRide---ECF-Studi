@@ -4,6 +4,8 @@
 //	Chemin : /frontend/js/login.js
 //
 
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const form       = document.getElementById('form-login');
   const messageBox = document.getElementById('form-message');

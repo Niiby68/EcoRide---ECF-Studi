@@ -4,6 +4,8 @@
 //	Chemin : /frontend/js/signup.js
 //
 
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("form-inscription");
   const messageBox = document.getElementById("form-message");
