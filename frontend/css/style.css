@@ -7,7 +7,7 @@
 
 
 
-/* Variables CSS pour la palette */
+/* 1. Variables CSS pour la palette */
 :root {
   --color-primary:   #2E7D32; /* vert primaire */
   --color-secondary: #66BB6A; /* vert secondaire */
@@ -15,13 +15,15 @@
   --gray-dark:       #424242;
   --white:           #FFFFFF;
   --black:           #000000;
+  --bg-nature:       #E8F5E9; /* vert très clair pour le fond */
+  --card-bg:         #C8E6C9; /* vert doux pour cartes */
 }
 
-/* Fontes globales */
+/* 2. Fontes globales */
 body {
   font-family: 'Roboto', sans-serif;
   color: var(--gray-dark);
-  background-color: var(--white);
+  background-color: var(--bg-nature);
   line-height: 1.5;
 }
 
@@ -40,7 +42,7 @@ h4 { font-size: 1.5rem; }
 h5 { font-size: 1.25rem;}
 h6 { font-size: 1rem;   }
 
-/* Boutons */
+/* 3. Boutons */
 .btn-primary {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
@@ -52,26 +54,47 @@ h6 { font-size: 1rem;   }
   border-color: var(--color-secondary);
 }
 
-/* Formulaires */
+/* 4. Formulaires */
 .form-control:focus {
   border-color: var(--color-secondary);
   box-shadow: 0 0 0 .2rem rgba(102, 187, 106, .25);
 }
 
-/* Cartes */
+/* 5. Cartes */
 .card {
-  background: var(--white);
+  background: var(--card-bg);
   border: 1px solid #e0e0e0;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-radius: .25rem;
+  border-top-left-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+  border-top-right-radius: 0rem;
+  border-bottom-left-radius: 0;
 }
 
-/* Navbar */
+/* 6. Navbar */
 .navbar, .nav {
   font-family: 'Roboto', sans-serif;
 }
 
-/* Alertes */
+/* 7. Alertes */
 .alert {
   font-size: 1rem;
 }
+
+/* Menu principal blanc bordé de noir */
+.header-menu {
+  background-color: #FFFFFF;
+  border: 1px solid #000000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-top-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  border-top-right-radius: 0rem;
+  border-bottom-left-radius: 0;
+  padding: 0.50rem;
+  text-decoration: underline;
+}
+.header-menu .nav-link {
+  color: #000000;
+  margin-top: 0.3rem;
+}
+
