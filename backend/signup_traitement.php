@@ -1,7 +1,6 @@
 <?php
 //
 //	Script : signup_traitement.php
-//
 //	Chemin : /backend/signup_traitement.php
 //
 
@@ -49,7 +48,7 @@ try {
     // Réponse AJAX
     if ($is_ajax) {
         $response['success'] = true;
-        $response['message'] = 'Inscription réussie ! Redirection vers la connexion...';
+        $response['message'] = 'Inscription réussie ! Redirection vers la connexion...';
         $response['redirect'] = '../frontend/login.php';
         header('Content-Type: application/json');
         echo json_encode($response);

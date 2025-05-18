@@ -1,6 +1,5 @@
 //
 //	Moteur Javascript pour login.php
-//
 //	Chemin : /frontend/js/login.js
 //
 

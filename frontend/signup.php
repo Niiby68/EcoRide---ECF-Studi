@@ -1,7 +1,6 @@
 <?php
 //
 //	Formulaire d'Inscription
-//
 //	Chemin : /frontend/signup.php
 //
 
@@ -29,13 +28,13 @@ if (isset($_SESSION['user_id'])) {
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
 	<!-- Bootstrap CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 	<!-- Feuille de style locale -->
 	<link rel="stylesheet" href="css/style.css">
 
 	<!-- Bootstrap JS (non bloquant) -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 
 	<!-- JS pour AJAX -->
 	<script src="js/signup.js" defer></script>
@@ -51,18 +50,68 @@ if (isset($_SESSION['user_id'])) {
 	  </div>
 	</noscript>
 	
-	<header class="mt-3">
-		<div class="container d-flex align-items-center py-3">
-			<nav class="ms-auto header-menu">
-				<ul class="nav">
-				<img src="/assets/logo/logo.png" alt="Logo EcoRide" height="50">
-					<li class="nav-item"><a href="index.php" class="nav-link">Accueil</a></li>
-					<li class="nav-item"><a href="signup.php" class="nav-link active">Inscription</a></li>
-					<li class="nav-item"><a href="login.php" class="nav-link">Connexion</a></li>
-				</ul>
-			</nav>
-		</div>
-	</header>
+    <header class="menu">
+        <div class="container cont-menu">
+            <nav class="navbar header-menu navbar-expand-md navbar-light">
+			
+				<!-- Groupe gauche : logo -->
+                <div class="nav-left d-none d-lg-flex">
+                    <ul class="nav mb-0">
+                        <li class="nav-item">
+                            <a href="index.php">
+                                <img src="/img/logo/logo.png" alt="EcoRide" height="40">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-logo d-flex d-lg-none align-items-center justify-content-center w-100">
+					<button class="navbar-toggler me-5"
+							type="button"
+							data-bs-toggle="collapse"
+							data-bs-target="#ecoNavbar"
+							aria-controls="ecoNavbar"
+							aria-expanded="false"
+							aria-label="Ouvrir le menu">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+                    <a href="index.php" class="mx-3">
+                        <img src="/img/logo/logo.png" alt="EcoRide" height="40">
+                    </a>
+					<button class="navbar-toggler ms-5"
+							type="button"
+							data-bs-toggle="collapse"
+							data-bs-target="#ecoNavbar"
+							aria-controls="ecoNavbar"
+							aria-expanded="false"
+							aria-label="Ouvrir le menu">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+                </div>
+				
+                <!-- Groupe milieu : liens -->
+				<div class="nav-mid collapse navbar-collapse justify-content-center" id="ecoNavbar">
+					<ul class="nav mb-0">
+                        <li class="nav-item">
+                            <a href="index.php" class="btn btn-primary">Accueil</a>
+                        </li>
+						<li class="nav-item">
+                            <a href="signup.php" class="btn btn-primary">Inscription</a>
+                        </li>
+                    </ul>
+                </div>
+				
+                <!-- Groupe droite : Connexion / Déconnexion -->
+                <div class="nav-right">
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a href="login.php" class="btn btn-primary codeco">Connexion</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
 
 	<!-- Fil d’Ariane -->
 	<div class="container">
@@ -75,7 +124,7 @@ if (isset($_SESSION['user_id'])) {
 	</div>
 
 	<main class="container">
-		<h1 class="mb-4">Inscription sur EcoRide</h1>
+		<h1 class="mb-4">Inscription</h1>
 		
 		<div id="form-message" class="alert d-none alert-dismissible fade show" role="alert">
 			<span id="form-message-text"></span>

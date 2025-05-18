@@ -1,7 +1,6 @@
 <?php
 //
 //	Script : logout.php
-//
 //	Chemin : /backend/logout.php
 //
 

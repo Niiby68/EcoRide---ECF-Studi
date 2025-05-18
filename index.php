@@ -1,7 +1,6 @@
 <?php
 //
 //	Redirection vers la page d'accueil
-//
 //	Chemin : Répertoire racine
 //
 

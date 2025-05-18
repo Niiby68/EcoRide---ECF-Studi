@@ -1,7 +1,6 @@
 <?php
 //
 //	Script : login_traitement.php
-//
 //	Chemin : /backend/login_traitement.php
 //
 
@@ -57,7 +56,7 @@ try {
         header('Content-Type: application/json');
         echo json_encode([
             'success'  => true,
-            'message'  => 'Connexion réussie ! Redirection…',
+            'message'  => 'Connexion réussie ! Redirection vers l\'accueil..',
             'redirect' => 'index.php'
         ]);
         exit;

@@ -1,7 +1,6 @@
 <?php
 //
 //	Objet : Utilisateur
-//
 //	/backend/models/Utilisateur.php
 //
 
