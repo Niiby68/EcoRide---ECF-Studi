@@ -59,7 +59,7 @@ $is_connected = isset($_SESSION['user_id']);
                     </ul>
                 </div>
 
-                <div class="nav-logo d-flex d-lg-none align-items-center justify-content-center w-100">
+                <div class="nav-logo d-flex d-lg-none align-items-center justify-content-center w-100 mt-3">
 					<button class="navbar-toggler me-5"
 							type="button"
 							data-bs-toggle="collapse"
@@ -115,17 +115,44 @@ $is_connected = isset($_SESSION['user_id']);
 	
     <main class="container">
         <h1 class="titre-principal">Bienvenue sur EcoRide</h1>
+		
+		<!-- Contenu du site -->
         <div class="card">
-            <div class="card-body">
-                <h2 class="card-title titre-secondaire">La plateforme de covoiturage écoresponsable</h2>
-                <p class="card-text">Inscrivez-vous, proposez ou réservez un trajet, et contribuez à un transport plus durable.</p>
-                <?php if (!$is_connected): ?>
-                  <a href="signup.php" class="btn btn-primary me-2">S'inscrire</a>
-                  <a href="login.php" class="btn btn-primary">Se connecter</a>
-                <?php else: ?>
-                  <p class="text-success">Connecté · <strong><?= htmlspecialchars($_SESSION['pseudo']); ?></strong></p>
-                <?php endif; ?>
-            </div>
+            <section class="presentation d-flex flex-lg-row flex-column align-items-center justify-content-between">
+                
+                <!-- Texte -->
+                <div class="text-content pe-lg-4">
+                    <h2 class="mb-3">Bienvenue sur EcoRide 🌿</h2>
+                    <p>
+                        EcoRide est une plateforme de covoiturage pensée pour faciliter les déplacements tout en réduisant notre impact sur l’environnement.
+                        En mettant en relation des conducteurs et des passagers, nous encourageons une mobilité plus douce, plus responsable et plus économique.
+                    </p>
+                    <p>
+                        Chaque trajet partagé permet de limiter les émissions de CO₂, de désengorger les routes et de créer du lien social entre les usagers.
+                        Que vous soyez conducteur ou passager, EcoRide vous accompagne avec simplicité, efficacité et transparence.
+                    </p>
+					
+					<!-- Image insérée ici pour mobile -->
+					<img src="img/accueil/voiture.png"
+						alt="Covoiturage écologique"
+						class="img-fluid rounded my-3 d-lg-none"
+						style="max-width: 300px;">
+					
+                    <p>
+                        Ce projet a été conçu dans une logique de développement durable, en mettant l’humain et la planète au cœur de nos préoccupations.
+                        Grâce à une interface intuitive et responsive, vous pouvez facilement proposer un trajet ou en rechercher un, où que vous soyez.
+                    </p>
+                    <p class="mb-0">
+                        Ensemble, adoptons une nouvelle façon de voyager : plus écologique, plus solidaire… plus EcoRide. 🌱
+                    </p>
+                </div>
+
+				<!-- Image visible uniquement sur desktop -->
+				<img src="img/accueil/voiture.png"
+					alt="Covoiturage écologique"
+					class="img-fluid rounded mt-3 mt-lg-0 ms-lg-4 d-none d-lg-block"
+					style="max-width: 300px; height: auto;">
+            </section>
         </div>
     </main>
 	

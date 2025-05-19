@@ -73,7 +73,7 @@ if (isset($_SESSION['user_id'])) {
                     </ul>
                 </div>
 
-                <div class="nav-logo d-flex d-lg-none align-items-center justify-content-center w-100">
+                <div class="nav-logo d-flex d-lg-none align-items-center justify-content-center w-100 mt-3">
 					<button class="navbar-toggler me-5"
 							type="button"
 							data-bs-toggle="collapse"
