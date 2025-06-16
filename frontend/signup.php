@@ -161,7 +161,7 @@ if (isset($_SESSION['user_id'])) {
 	</main>
 
 	<footer class="text-center mt-5 mb-3">
-		<p>&copy; 2025 EcoRide - Tous droits réservés.</p>
+		<p>&copy; 2025 EcoRide &nbsp;&mdash;&nbsp; <a href="mailto:contact@ecoride.com">Contacts</a> &nbsp;&mdash;&nbsp; <a href="mentions-legales.php">Mentions légales</a></p>
 	</footer>
 </body>
 </html>

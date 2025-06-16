@@ -19,10 +19,10 @@ $is_connected = isset($_SESSION['user_id']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoRide - Accueil</title>
 	
-    <!-- Google Fonts Roboto & Lora -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
+	<!-- Chargement complet des familles Roboto et Lora via Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 	
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -116,13 +116,28 @@ $is_connected = isset($_SESSION['user_id']);
     <main class="container">
         <h1 class="titre-principal">Bienvenue sur EcoRide</h1>
 		
+		<!-- Barre de recherche -->
+		<form method="get" action="recherche.php" class="mb-4">
+			<div class="row g-2">
+				<div class="col-md-5">
+					<input type="text" name="depart" class="form-control" placeholder="Ville de départ (ex : Strasbourg)" aria-label="Ville de départ" required>
+				</div>
+				<div class="col-md-5">
+					<input type="text" name="arrivee" class="form-control" placeholder="Ville d’arrivée (ex : Colmar)" aria-label="Ville d’arrivée" required>
+				</div>
+				<div class="col-md-2">
+					<button class="btn btn-primary w-100" type="submit">Rechercher</button>
+				</div>
+			</div>
+		</form>
+		
 		<!-- Contenu du site -->
         <div class="card">
             <section class="presentation d-flex flex-lg-row flex-column align-items-center justify-content-between">
                 
                 <!-- Texte -->
                 <div class="text-content pe-lg-4">
-                    <h2 class="mb-3">Bienvenue sur EcoRide 🌿</h2>
+                    <h2 class="mb-3">Le covoiturage écolo 🌿</h2>
                     <p>
                         EcoRide est une plateforme de covoiturage pensée pour faciliter les déplacements tout en réduisant notre impact sur l’environnement.
                         En mettant en relation des conducteurs et des passagers, nous encourageons une mobilité plus douce, plus responsable et plus économique.
@@ -135,8 +150,7 @@ $is_connected = isset($_SESSION['user_id']);
 					<!-- Image insérée ici pour mobile -->
 					<img src="img/accueil/voiture.png"
 						alt="Covoiturage écologique"
-						class="img-fluid rounded my-3 d-lg-none"
-						style="max-width: 300px;">
+						class="img-fluid rounded my-3 d-lg-none mx-auto">
 					
                     <p>
                         Ce projet a été conçu dans une logique de développement durable, en mettant l’humain et la planète au cœur de nos préoccupations.
@@ -150,14 +164,13 @@ $is_connected = isset($_SESSION['user_id']);
 				<!-- Image visible uniquement sur desktop -->
 				<img src="img/accueil/voiture.png"
 					alt="Covoiturage écologique"
-					class="img-fluid rounded mt-3 mt-lg-0 ms-lg-4 d-none d-lg-block"
-					style="max-width: 300px; height: auto;">
+					class="img-fluid rounded mt-3 mt-lg-0 ms-lg-4 d-none d-lg-block">
             </section>
         </div>
     </main>
 	
-    <footer class="text-center mt-5 mb-3">
-        <p>&copy; 2025 EcoRide - Tous droits réservés.</p>
-    </footer>
+	<footer class="text-center mt-5 mb-3">
+		<p>&copy; 2025 EcoRide &nbsp;&mdash;&nbsp; <a href="mailto:contact@ecoride.com">Contacts</a> &nbsp;&mdash;&nbsp; <a href="mentions-legales.php">Mentions légales</a></p>
+	</footer>
 </body>
 </html>

@@ -118,9 +118,24 @@ h1, h2, h3, h4, h5, h6 {
 	text-align: center;
 }
 
-.titre-secondaire
-{
+.titre-secondaire {
 	font-style: italic;
+}
+
+.img-fluid {
+	max-width: 300px;
+	height: auto;
+}
+
+
+
+/* Pied de page */
+footer a {
+	color: var(--color-primary);
+	text-decoration: none;
+}
+footer a:hover {
+	text-decoration: underline;
 }
 
 
@@ -169,8 +184,8 @@ h1, h2, h3, h4, h5, h6 {
 	
 	.navbar-toggler:focus,
 	.navbar-toggler:active {
-		outline: none !important;
-		box-shadow: none !important;
+		outline: none;
+		box-shadow: none;
 	}
 	
 	.navbar-collapse {
@@ -182,4 +197,9 @@ h1, h2, h3, h4, h5, h6 {
 	.navbar-collapse.show {
 		max-height: 300px;
 	}
+	
+	.img-fluid {
+        max-width: 100%;
+        height: auto;
+    }
 }
