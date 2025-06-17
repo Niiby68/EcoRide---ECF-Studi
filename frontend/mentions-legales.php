@@ -35,14 +35,14 @@ $is_connected = isset($_SESSION['user_id']);
 </head>
 
 <body>
-	<noscript>
-	  <div class="container">
-		<div class="alert alert-warning text-center my-4" role="alert">
-		  <strong>Attention :</strong> JavaScript est désactivé dans votre navigateur.  
-		  Le site fonctionnera en mode simplifié, mais certaines fonctionnalités seront limitées.
-		</div>
-	  </div>
-	</noscript>
+    <noscript>
+      <div class="container">
+        <div class="alert alert-warning javamess" role="alert">
+			<strong>Attention :</strong> JavaScript est désactivé dans votre navigateur.  
+			Le site fonctionnera en mode simplifié, mais certaines fonctionnalités seront limitées.
+        </div>
+      </div>
+    </noscript>
 	
 	<header class="menu">
 		<div class="container cont-menu">
@@ -88,6 +88,9 @@ $is_connected = isset($_SESSION['user_id']);
 					<ul class="nav mb-0">
 						<li class="nav-item">
 							<a href="index.php" class="btn btn-primary">Accueil</a>
+						</li>
+						<li class="nav-item">
+							<a href="covoiturages.php" class="btn btn-primary">Covoiturages</a>
 						</li>
 						<?php if (!$is_connected): ?>
 						<li class="nav-item">

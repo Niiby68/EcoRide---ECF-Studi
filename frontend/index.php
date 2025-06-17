@@ -8,6 +8,13 @@
 
 session_start();
 $is_connected = isset($_SESSION['user_id']);
+
+
+
+//
+//	Fichiers additionnels
+//
+require_once( "includes/formulaire-trajet.php" );
 ?>
 
 
@@ -89,6 +96,9 @@ $is_connected = isset($_SESSION['user_id']);
                         <li class="nav-item">
                             <a href="index.php" class="btn btn-primary">Accueil</a>
                         </li>
+						<li class="nav-item">
+							<a href="covoiturages.php" class="btn btn-primary">Covoiturages</a>
+						</li>
 						<?php if (!$is_connected): ?>
                         <li class="nav-item">
                             <a href="signup.php" class="btn btn-primary">Inscription</a>
@@ -117,19 +127,7 @@ $is_connected = isset($_SESSION['user_id']);
         <h1 class="titre-principal">Bienvenue sur EcoRide</h1>
 		
 		<!-- Barre de recherche -->
-		<form method="get" action="recherche.php" class="mb-4">
-			<div class="row g-2">
-				<div class="col-md-5">
-					<input type="text" name="depart" class="form-control" placeholder="Ville de départ (ex : Strasbourg)" aria-label="Ville de départ" required>
-				</div>
-				<div class="col-md-5">
-					<input type="text" name="arrivee" class="form-control" placeholder="Ville d’arrivée (ex : Colmar)" aria-label="Ville d’arrivée" required>
-				</div>
-				<div class="col-md-2">
-					<button class="btn btn-primary w-100" type="submit">Rechercher</button>
-				</div>
-			</div>
-		</form>
+		<?php formulaire_trajet( 'covoiturages.php' ); ?>
 		
 		<!-- Contenu du site -->
         <div class="card">
