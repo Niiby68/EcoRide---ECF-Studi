@@ -1,6 +1,6 @@
 <?php
 //
-//	Script : login_traitement.php
+//	Page de connexion ( Traitement )
 //	Chemin : /backend/login_traitement.php
 //
 

@@ -1,6 +1,6 @@
 <?php
 //
-//  Page Mentions légales
+//  Page des Mentions légales
 //  Chemin : /frontend/mentions-legales.php
 //
 

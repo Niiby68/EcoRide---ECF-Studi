@@ -1,5 +1,5 @@
 //
-//	Moteur Javascript pour signup.php
+//	Page d'inscription ( Javascript )
 //	Chemin : /frontend/js/signup.js
 //
 

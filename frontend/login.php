@@ -1,6 +1,6 @@
 <?php
 //
-//	Formulaire de Connexion
+//	Page de connexion
 //	Chemin : /frontend/login.php
 //
 

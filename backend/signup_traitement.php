@@ -1,6 +1,6 @@
 <?php
 //
-//	Script : signup_traitement.php
+//	Page d'inscription ( Traitement )
 //	Chemin : /backend/signup_traitement.php
 //
 

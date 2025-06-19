@@ -1,6 +1,6 @@
 <?php
 //
-//	Formulaire d'Inscription
+//	Page d'Inscription
 //	Chemin : /frontend/signup.php
 //
 
