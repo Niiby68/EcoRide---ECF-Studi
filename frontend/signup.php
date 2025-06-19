@@ -11,6 +11,17 @@ if (isset($_SESSION['user_id'])) {
 	header('Location: index.php');
 	exit;
 }
+
+$chemin_racine = '../';
+
+
+
+//
+//	Fichiers additionnels
+//
+require_once('includes/pied-de-page.php');
+require_once('includes/javamess.php');
+require_once('includes/en-tete.php');
 ?>
 
 
@@ -41,80 +52,11 @@ if (isset($_SESSION['user_id'])) {
 </head>
 
 <body>
-    <noscript>
-      <div class="container">
-        <div class="alert alert-warning javamess" role="alert">
-			<strong>Attention :</strong> JavaScript est désactivé dans votre navigateur.  
-			Le site fonctionnera en mode simplifié, mais certaines fonctionnalités seront limitées.
-        </div>
-      </div>
-    </noscript>
+	<!-- Message d'activation du Javascript -->
+    <?php javamess(); ?>
 	
-    <header class="menu">
-        <div class="container cont-menu">
-            <nav class="navbar header-menu navbar-expand-md navbar-light">
-			
-				<!-- Groupe gauche : logo -->
-                <div class="nav-left d-none d-lg-flex">
-                    <ul class="nav mb-0">
-                        <li class="nav-item">
-                            <a href="index.php">
-                                <img src="/img/logo/logo.png" alt="EcoRide" height="40">
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="nav-logo d-flex d-lg-none align-items-center justify-content-center w-100 mt-3">
-					<button class="navbar-toggler me-5"
-							type="button"
-							data-bs-toggle="collapse"
-							data-bs-target="#ecoNavbar"
-							aria-controls="ecoNavbar"
-							aria-expanded="false"
-							aria-label="Ouvrir le menu">
-						<span class="navbar-toggler-icon"></span>
-					</button>
-                    <a href="index.php" class="mx-3">
-                        <img src="/img/logo/logo.png" alt="EcoRide" height="40">
-                    </a>
-					<button class="navbar-toggler ms-5"
-							type="button"
-							data-bs-toggle="collapse"
-							data-bs-target="#ecoNavbar"
-							aria-controls="ecoNavbar"
-							aria-expanded="false"
-							aria-label="Ouvrir le menu">
-						<span class="navbar-toggler-icon"></span>
-					</button>
-                </div>
-				
-                <!-- Groupe milieu : liens -->
-				<div class="nav-mid collapse navbar-collapse justify-content-center" id="ecoNavbar">
-					<ul class="nav mb-0">
-                        <li class="nav-item">
-                            <a href="index.php" class="btn btn-primary">Accueil</a>
-                        </li>
-						<li class="nav-item">
-							<a href="covoiturages.php" class="btn btn-primary">Covoiturages</a>
-						</li>
-						<li class="nav-item">
-                            <a href="signup.php" class="btn btn-primary">Inscription</a>
-                        </li>
-                    </ul>
-                </div>
-				
-                <!-- Groupe droite : Connexion / Déconnexion -->
-                <div class="nav-right">
-                    <ul class="nav">
-                        <li class="nav-item">
-                            <a href="login.php" class="btn btn-primary codeco">Connexion</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-    </header>
+	<!-- Header -->
+    <?php en_tete($chemin_racine); ?>
 
 	<!-- Fil d’Ariane -->
 	<div class="container">
@@ -162,9 +104,7 @@ if (isset($_SESSION['user_id'])) {
 			</div>
 		</div>
 	</main>
-
-	<footer class="text-center mt-5 mb-3">
-		<p>&copy; 2025 EcoRide &nbsp;&mdash;&nbsp; <a href="mailto:contact@ecoride.com">Contacts</a> &nbsp;&mdash;&nbsp; <a href="mentions-legales.php">Mentions légales</a></p>
-	</footer>
+	
+	<?php pied_de_page($chemin_racine); ?>
 </body>
 </html>

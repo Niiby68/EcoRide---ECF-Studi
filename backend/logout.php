@@ -1,6 +1,6 @@
 <?php
 //
-//	Script : logout.php
+//	Déconnexion du membre
 //	Chemin : /backend/logout.php
 //
 

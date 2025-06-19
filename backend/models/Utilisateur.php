@@ -1,4 +1,13 @@
 <?php
+declare(strict_types=1);
+
+if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
+    http_response_code(403);
+    exit('Accès interdit.');
+}
+
+
+
 //
 //	Objet : Utilisateur
 //	/backend/models/Utilisateur.php
@@ -13,9 +22,11 @@ class Utilisateur {
 	private $hashpass;
 	private $role;
 
+
+
 	// ======= SETTERS =======
 
-	public function set_pseudo($texte) {
+	public function set_pseudo(string $texte) {
 		$texte = trim($texte);
 		if (strlen($texte) < 3 || strlen($texte) > 50) return false;
 		if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $texte)) return false;
@@ -23,7 +34,7 @@ class Utilisateur {
 		return true;
 	}
 
-	public function set_email($texte) {
+	public function set_email(string $texte) {
 		$texte = trim($texte);
 		if (strlen($texte) > 255) return false;
 		if (!filter_var($texte, FILTER_VALIDATE_EMAIL)) return false;
@@ -31,18 +42,20 @@ class Utilisateur {
 		return true;
 	}
 
-	public function set_password($texte) {
+	public function set_password(string $texte) {
 		if (strlen($texte) < 6) return false;
 		$this->motdepasse = $texte;
 		return true;
 	}
 
-	public function set_role($valeur) {
+	public function set_role(string $valeur) {
 		$roles = ['passager', 'chauffeur', 'les_deux'];
 		if (!in_array($valeur, $roles)) return false;
 		$this->role = $valeur;
 		return true;
 	}
+
+
 
 	// ======= GETTERS =======
 
@@ -66,9 +79,11 @@ class Utilisateur {
 		return $this->role;
 	}
 
-	// ======= Database operations =======
 
-	// Check if a user already exists by email
+
+	// ======= Opérations sur la BDD =======
+
+	// Vérifie si l'email de l'utilisateur est déjà utilisé
 	public function is_user_exist(PDO $pdo) {
 		$sql = "SELECT COUNT(*) FROM utilisateurs WHERE email = :email";
 		$stmt = $pdo->prepare($sql);
@@ -76,7 +91,7 @@ class Utilisateur {
 		return $stmt->fetchColumn() > 0;
 	}
 	
-	// Check if a user already exists by pseudo
+	// Vérifie si le pseudo de l'utilisateur est déjà utilisé
 	public function is_pseudo_exist(PDO $pdo) {
 		$sql = "SELECT COUNT(*) FROM utilisateurs WHERE pseudo = :pseudo";
 		$stmt = $pdo->prepare($sql);
@@ -84,7 +99,7 @@ class Utilisateur {
 		return $stmt->fetchColumn() > 0;
 	}
 
-	// Add the current user to the database
+	// Ajoute l'utilisateur dans la BDD
 	public function add_user(PDO $pdo) {
 		$sql = "INSERT INTO utilisateurs (pseudo, email, mot_de_passe, role) 
 		        VALUES (:pseudo, :email, :motdepasse, :role)";
@@ -98,7 +113,7 @@ class Utilisateur {
 		]);
 	}
 	
-	// Load a user by their email
+	// Charge les données de l'utilisateur en utilisant son email
 	public function load_user_by_email(PDO $pdo) {
 		$sql = "SELECT * FROM utilisateurs WHERE email = :email";
 		$stmt = $pdo->prepare($sql);
