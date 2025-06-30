@@ -10,7 +10,7 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
 
 //
 //	Pied de page
-//	/frontend/includes/pied-de-page.php
+//	Chemin : /frontend/includes/pied-de-page.php
 //
 
 

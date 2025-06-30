@@ -10,7 +10,7 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
 
 //
 //	En-tête des pages
-//	/frontend/includes/en-tete.php
+//	Chemin : /frontend/includes/en-tete.php
 //
 
 

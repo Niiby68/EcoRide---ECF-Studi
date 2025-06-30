@@ -10,7 +10,7 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
 
 //
 //	Message d'activation du Javascript
-//	/frontend/includes/javamess.php
+//	Chemin : /frontend/includes/javamess.php
 //
 
 

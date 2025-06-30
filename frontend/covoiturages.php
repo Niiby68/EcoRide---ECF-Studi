@@ -39,10 +39,13 @@ require_once('includes/en-tete.php');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Feuille de style locale -->
-    <link rel="stylesheet" href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 	
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+	<!-- JS pour AJAX -->
+	<script src="js/recherche-covoiturages.js" defer></script>
 </head>
 
 <body>
@@ -66,7 +69,7 @@ require_once('includes/en-tete.php');
         <h1 class="mb-4">Trouvez un trajet en covoiturage</h1>
 		
 		<!-- Barre de recherche -->
-		<?php formulaire_trajet( 'covoiturages.php' ); ?>
+		<?php formulaire_trajet( $chemin_racine.'backend/recherche-covoiturages.php' ); ?>
 		
 		<div id="form-message" class="alert d-none alert-dismissible fade show" role="alert">
 			<span id="form-message-text"></span>
@@ -74,8 +77,9 @@ require_once('includes/en-tete.php');
 		</div>
 		
 		<div class="card">
-			<div class="card-body">
-				<!-- emplacement de réponse de la requête asynchrone -->
+			<div class="card-body text-center" id="reponse-trajet">
+				<p class="text-muted">Aucun trajet n’a encore été recherché. Utilisez le formulaire ci-dessus pour lancer une recherche.</p>
+				<img src="img/covoiturages/voiture.png" alt="Illustration voiture en attente d'un trajet" class="img-fluid mt-3 rounded my-3">
 			</div>
 		</div>	
     </main>

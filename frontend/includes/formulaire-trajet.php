@@ -10,7 +10,7 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
 
 //
 //	Formulaire de recherche de trajet
-//	/frontend/includes/formulaire_trajet.php
+//	Chemin : /frontend/includes/formulaire_trajet.php
 //
 
 
@@ -23,7 +23,7 @@ function formulaire_trajet(string $action = 'recherche.php'): void {
     $date     = $_GET['date']     ?? '';
 	
 	?>
-	<form method="get" action="<?= htmlspecialchars($action, ENT_QUOTES, 'UTF-8') ?>" class="mb-4">
+	<form method="get" id="form-recherche-trajet" action="<?= htmlspecialchars($action, ENT_QUOTES, 'UTF-8') ?>" class="mb-4">
 		<div class="row g-2">
 			<div class="col-md-3">
 				<input type="text" name="depart" class="form-control" placeholder="Ville de départ (ex : Strasbourg)" aria-label="Ville de départ" value="<?= htmlspecialchars($depart, ENT_QUOTES, 'UTF-8') ?>" required>
