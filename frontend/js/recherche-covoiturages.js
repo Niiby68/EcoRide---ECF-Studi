@@ -3,8 +3,6 @@
 //  Chemin : /frontend/js/recherche-covoiturages.js
 //
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
     // Sélection du formulaire, du bouton et du conteneur de résultats
     const form = document.getElementById('form-recherche-trajet');
@@ -76,20 +74,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 } else {
                     data.resultats.forEach(trajet => {
-                        // Formatage de la date
-                        let formattedDate = trajet.date_depart;
+                        // Formatage de la date et de l'heure
+                        let formattedDateTime = trajet.date_depart;
                         try {
-                            formattedDate = new Date(trajet.date_depart)
-                                .toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+                            const dateObj = new Date(trajet.date_depart);
+                            formattedDateTime = dateObj.toLocaleString(undefined, {
+                                day: 'numeric', month: 'long', year: 'numeric',
+                                hour: '2-digit', minute: '2-digit'
+                            });
                         } catch (_) {}
 
                         // Création de la carte trajet
                         const card = document.createElement('div');
                         card.className = 'trajet-card';
                         card.innerHTML = `
-                            <h3>Trajet du ${escapeHTML(formattedDate)}</h3>
+                            <h3>Trajet du ${escapeHTML(formattedDateTime)}</h3>
                             <p><strong>Départ :</strong> ${escapeHTML(trajet.adresse_depart)}</p>
                             <p><strong>Arrivée :</strong> ${escapeHTML(trajet.adresse_arrivee)}</p>
+                            <p><strong>Prix :</strong> ${escapeHTML(trajet.prix)} crédits</p>
+                            <p><strong>Places restantes :</strong> ${escapeHTML(trajet.nb_places_restantes)} / ${escapeHTML(trajet.nb_places_total)}</p>
+                            <p><strong>Chauffeur :</strong> ${escapeHTML(trajet.pseudo)}${trajet.note_moyenne !== null ? ` (${escapeHTML(trajet.note_moyenne)} ⭐)` : ''}</p>
+                            <p><strong>Énergie :</strong> ${escapeHTML(trajet.energie)}${trajet.voyage_ecologique ? ' → 🌿 Voyage écologique' : ''}</p>
+                            ${trajet.alternative ? '<p class="text-danger">⚠️ Ce trajet est une proposition alternative à une autre date.</p>' : ''}
                         `;
                         resultContainer.appendChild(card);
                     });

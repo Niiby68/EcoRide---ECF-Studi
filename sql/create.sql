@@ -1,4 +1,3 @@
-
 -- Base de données EcoRide (relationnelle)
 
 -- Suppression des tables si elles existent déjà (ordre inverse des dépendances)
@@ -29,6 +28,7 @@ CREATE TABLE vehicules (
     date_immatriculation DATE NOT NULL,
     marque VARCHAR(50),
     modele VARCHAR(50),
+    energie ENUM('essence', 'diesel', 'hybride', 'electrique', 'GPL', 'autre') DEFAULT 'electrique',
     couleur VARCHAR(30),
     nb_places INT DEFAULT 1,
     fumeur BOOLEAN DEFAULT FALSE,
