@@ -198,4 +198,10 @@ footer a:hover {
         max-width: 100%;
         height: auto;
     }
+
+	.codeco {
+		background-color: var(--gray-dark);
+		margin-left: 1rem;
+		margin-right: 1rem;
+	}
 }

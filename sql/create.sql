@@ -45,6 +45,7 @@ CREATE TABLE trajets (
     adresse_depart VARCHAR(255),
     adresse_arrivee VARCHAR(255),
     date_depart DATETIME,
+    duree TIME,
     prix INT NOT NULL,
     nb_places_total INT,
     nb_places_restantes INT,

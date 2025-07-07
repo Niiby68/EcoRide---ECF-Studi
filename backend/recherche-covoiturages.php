@@ -4,15 +4,52 @@
 //  /backend/recherche-covoiturages.php
 //
 
+
+
 header('Content-Type: application/json');
+
+
 
 require_once '../config/db.php';
 $response = ['success' => false, 'message' => '', 'resultats' => []];
 
+
+
+//
+//  Réponse si le Javascript est désactivé ( variable GET reçus )
+//
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Content-Type: text/html; charset=UTF-8');
+    ?>
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>Erreur de la page</title>
+    </head>
+    <body>
+        <h1>Une erreur a été detectée</h1>
+        <p>
+            Il se peut que Javascript soit désactivé<br>
+            Cette page nécessite que le JavaScript soit activé pour fonctionner correctement.<br>
+            Veuillez activer JavaScript dans les paramètres de votre navigateur, puis réessayez.<br>
+            <a href="../frontend/covoiturages.php">Retour à la page précédente</a>
+        </p>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
+
+
+//
+//  Réponse si le Javascript est activé ( variables POST reçus )
+//
 try {
-    $depart   = strtoupper(trim($_POST['depart'] ?? ''));
-    $arrivee  = strtoupper(trim($_POST['arrivee'] ?? ''));
-    $date     = trim($_POST['date']   ?? '');
+    $depart  = strtoupper(trim($_POST['depart'] ?? ''));
+    $arrivee = strtoupper(trim($_POST['arrivee'] ?? ''));
+    $date    = trim($_POST['date'] ?? '');
 
     if ($depart === '' || $arrivee === '' || $date === '') {
         throw new Exception("Tous les champs sont requis.");
@@ -37,9 +74,7 @@ try {
 
     // Requête enrichie avec pseudo, énergie, et note moyenne via sous-requête
     $stmt = $pdo->prepare(
-        "SELECT t.*, 
-                u.pseudo,
-                v.energie,
+        "SELECT t.*, t.duree, u.pseudo, v.energie,
                 (
                     SELECT ROUND(AVG(a.note), 1)
                     FROM participations pa
@@ -67,7 +102,7 @@ try {
     if (empty($resultats)) {
         // Recherche d'alternatives à une autre date
         $altStmt = $pdo->prepare(
-            "SELECT t.*, u.pseudo, v.energie,
+            "SELECT t.*, t.duree, u.pseudo, v.energie,
                     (
                         SELECT ROUND(AVG(a.note), 1)
                         FROM participations pa

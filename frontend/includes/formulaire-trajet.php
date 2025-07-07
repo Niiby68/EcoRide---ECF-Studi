@@ -15,7 +15,7 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
 
 
 
-function formulaire_trajet(string $action = 'recherche.php'): void {
+function formulaire_trajet(string $action = 'covoiturages.php'): void {
 	
 	// Pré-remplissage des champs si disponible en GET
     $depart   = $_GET['depart']   ?? '';

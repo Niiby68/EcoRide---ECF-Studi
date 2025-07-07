@@ -66,11 +66,6 @@ function en_tete(string $chemin_racine, bool $is_connected = false): void {
 						<li class="nav-item">
 							<a href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>frontend/covoiturages.php" class="btn btn-primary">Covoiturages</a>
 						</li>
-						<?php if (!$is_connected): ?>
-                        <li class="nav-item">
-                            <a href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>frontend/signup.php" class="btn btn-primary">Inscription</a>
-                        </li>
-						<?php endif; ?>
                     </ul>
                 </div>
 				
@@ -84,6 +79,11 @@ function en_tete(string $chemin_racine, bool $is_connected = false): void {
                             <a href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>backend/logout.php" class="btn btn-primary codeco">Déconnexion</a>
                             <?php endif; ?>
                         </li>
+						<?php if (!$is_connected): ?>
+                        <li class="nav-item">
+                            <a href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>frontend/signup.php" class="btn btn-primary codeco">Inscription</a>
+                        </li>
+						<?php endif; ?>
                     </ul>
                 </div>
             </nav>

@@ -3,13 +3,19 @@
 //  Chemin : /frontend/js/recherche-covoiturages.js
 //
 
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // Sélection du formulaire, du bouton et du conteneur de résultats
     const form = document.getElementById('form-recherche-trajet');
     const resultContainer = document.getElementById('reponse-trajet');
     const submitButton = form?.querySelector('button[type="submit"]');
 
-    if (!form || !resultContainer || !submitButton) return;
+    if (!form || !resultContainer || !submitButton) {
+        console.error("Erreur : Formulaire, conteneur ou bouton non trouvé dans le DOM.");
+        alert("Erreur critique détectée : le formulaire ou ses éléments sont introuvables. Veuillez contacter l'administrateur du site.");
+        return;
+    }
 
     // Fonction d'échappement pour éviter les injections
     const escapeHTML = (str) => {
@@ -29,11 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return selectedDate >= today;
     };
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Fonction pour envoyer les données du formulaire
+    function envoyer_data() {
         const formData = new FormData(form);
-
         const date = formData.get('date');
+
         if (!isDateValid(date)) {
             resultContainer.innerHTML = `
                 <div class="error-block">
@@ -48,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.disabled = true;
         resultContainer.innerHTML = '<p id="loading-message">Chargement...</p>';
 
-        // Appel au backend
         fetch('../backend/recherche-covoiturages.php', {
             method: 'POST',
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
@@ -59,12 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            // Réinitialisation de l'affichage
             resultContainer.innerHTML = '';
 
             if (data?.success && Array.isArray(data.resultats)) {
                 if (data.resultats.length === 0) {
-                    // Message plus visuel lorsqu'aucun trajet n'est trouvé
                     resultContainer.innerHTML = `
                         <div class="no-results">
                             <h3>Aucun trajet trouvé</h3>
@@ -74,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 } else {
                     data.resultats.forEach(trajet => {
-                        // Formatage de la date et de l'heure
                         let formattedDateTime = trajet.date_depart;
                         try {
                             const dateObj = new Date(trajet.date_depart);
@@ -84,19 +86,26 @@ document.addEventListener('DOMContentLoaded', () => {
                             });
                         } catch (_) {}
 
-                        // Création de la carte trajet
                         const card = document.createElement('div');
                         card.className = 'trajet-card';
+                        card.style.border = '1px solid black';
+                        card.style.padding = '1rem';
+                        card.style.marginBottom = '1rem';
+                        card.style.borderRadius = '0.5rem';
                         card.innerHTML = `
-                            <h3>Trajet du ${escapeHTML(formattedDateTime)}</h3>
+                            <h3>Trajet du ${escapeHTML(formattedDateTime)} → ${escapeHTML(trajet.duree)}</h3>
                             <p><strong>Départ :</strong> ${escapeHTML(trajet.adresse_depart)}</p>
                             <p><strong>Arrivée :</strong> ${escapeHTML(trajet.adresse_arrivee)}</p>
-                            <p><strong>Prix :</strong> ${escapeHTML(trajet.prix)} crédits</p>
-                            <p><strong>Places restantes :</strong> ${escapeHTML(trajet.nb_places_restantes)} / ${escapeHTML(trajet.nb_places_total)}</p>
-                            <p><strong>Chauffeur :</strong> ${escapeHTML(trajet.pseudo)}${trajet.note_moyenne !== null ? ` (${escapeHTML(trajet.note_moyenne)} ⭐)` : ''}</p>
                             <p><strong>Énergie :</strong> ${escapeHTML(trajet.energie)}${trajet.voyage_ecologique ? ' → 🌿 Voyage écologique' : ''}</p>
+                            <p><strong>Chauffeur :</strong> ${escapeHTML(trajet.pseudo)}${trajet.note_moyenne !== null ? ` (${escapeHTML(trajet.note_moyenne)} ⭐)` : ''}</p>
+                            <p><strong>Places restantes :</strong> ${escapeHTML(trajet.nb_places_restantes)} / ${escapeHTML(trajet.nb_places_total)}</p>
+                            <p><strong>Prix :</strong> ${escapeHTML(trajet.prix)} crédits</p>
                             ${trajet.alternative ? '<p class="text-danger">⚠️ Ce trajet est une proposition alternative à une autre date.</p>' : ''}
                         `;
+                        const detailsLink = document.createElement('div');
+                        detailsLink.style.textAlign = 'right';
+                        detailsLink.innerHTML = `<a href="#" class="details-link">Afficher les détails</a>`;
+                        card.appendChild(detailsLink);
                         resultContainer.appendChild(card);
                     });
                 }
@@ -119,8 +128,22 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         })
         .finally(() => {
-            // Rétablissement du bouton
             submitButton.disabled = false;
         });
+    }
+
+    // Soumission du formulaire
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        envoyer_data();
     });
+
+    // Si les champs sont pré-remplis, lancer automatiquement la recherche
+    const depart = form.querySelector('[name="depart"]').value.trim();
+    const arrivee = form.querySelector('[name="arrivee"]').value.trim();
+    const date = form.querySelector('[name="date"]').value.trim();
+
+    if (depart !== '' || arrivee !== '' || date !== '') {
+        envoyer_data();
+    }
 });
