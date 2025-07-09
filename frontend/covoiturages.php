@@ -76,6 +76,48 @@ require_once('includes/en-tete.php');
 			<button type="button" class="btn-close pb-2" data-bs-dismiss="alert" aria-label="Fermer"></button>
 		</div>
 		
+		<!-- Filtres dynamiques -->
+		<div class="filters card p-3 mb-4 d-none" id="bloc-filtres">
+			<div class="row g-2 align-items-end">
+				<div class="col-md-4">
+					<label for="filtre-prix" class="form-label">Prix maximum (€)</label>
+					<input type="number" id="filtre-prix" class="form-control" min="0" step="1">
+				</div>
+				
+				<div class="col-md-4">
+					<label class="form-label">Durée maximale</label>
+					<div class="d-flex gap-2">
+						<select id="filtre-duree-heures" class="form-select">
+							<option value="">Heures</option>
+							<?php for ($i = 0; $i <= 24; $i++) echo "<option value=\"$i\">$i h</option>"; ?>
+						</select>
+						<select id="filtre-duree-minutes" class="form-select">
+							<option value="">Minutes</option>
+							<?php for ($i = 0; $i <= 59; $i += 5) echo "<option value=\"$i\">$i mn</option>"; ?>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<label for="filtre-note" class="form-label">Note minimum du chauffeur</label>
+					<input type="number" id="filtre-note" class="form-control" min="0" max="5" step="0.1" value="0">
+				</div>
+			</div>
+
+			<div class="row g-2 mt-3">
+				<div class="col-md-6">
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="filtre-ecolo">
+						<label class="form-check-label" for="filtre-ecolo">Voyages écologiques 🌿 (électriques uniquement)</label>
+					</div>
+				</div>
+				<div class="col-md-6 text-md-end">
+					<button id="btn-filtrer" class="btn btn-primary">Filtrer</button>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Résultats de la recherche -->
 		<div class="card">
 			<div class="card-body text-center" id="reponse-trajet">
 				<p class="text-muted">Aucun trajet n’a encore été recherché. Utilisez le formulaire ci-dessus pour lancer une recherche.</p>

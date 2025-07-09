@@ -3,28 +3,26 @@
 //  Chemin : /frontend/js/recherche-covoiturages.js
 //
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Sélection du formulaire, du bouton et du conteneur de résultats
+    let trajets = []; // Stockage global pour filtrage
+
     const form = document.getElementById('form-recherche-trajet');
     const resultContainer = document.getElementById('reponse-trajet');
     const submitButton = form?.querySelector('button[type="submit"]');
 
+	// Sécurité formulaire
     if (!form || !resultContainer || !submitButton) {
         console.error("Erreur : Formulaire, conteneur ou bouton non trouvé dans le DOM.");
         alert("Erreur critique détectée : le formulaire ou ses éléments sont introuvables. Veuillez contacter l'administrateur du site.");
         return;
     }
 
-    // Fonction d'échappement pour éviter les injections
     const escapeHTML = (str) => {
         const div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
     };
 
-    // Vérification de la validité de la date
     const isDateValid = (inputDate) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -34,8 +32,94 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return selectedDate >= today;
     };
+	
+	// Conversion de la durée du format TIME en heures et minutes
+	function formatDuree(dureeStr) {
+		const [heures, minutes] = dureeStr.split(':').map(Number);
+		const h = heures ? `${heures}h` : '';
+		const m = minutes ? `${minutes}mn` : '';
+		return `${h}${h && m ? ' ' : ''}${m}` || '0mn';
+	}
+	
+	// Conversation la durée TIME en minutes
+	function convertirDureeEnMinutes(dureeStr) {
+		if (!dureeStr || !dureeStr.includes(':')) return Infinity;
 
-    // Fonction pour envoyer les données du formulaire
+		const [heures, minutes, secondes] = dureeStr.split(':').map(Number);
+		return (heures * 60) + minutes + Math.floor(secondes / 60);
+	}
+
+	// Affichage des trajets
+    function afficherTrajets(trajetsAAfficher) {
+        resultContainer.innerHTML = '';
+
+        if (trajetsAAfficher.length === 0) {
+            resultContainer.innerHTML = `
+                <div class="no-results">
+                    <h3>Aucun trajet trouvé</h3>
+                    <p>Nous n'avons pas trouvé de covoiturage correspondant à vos critères.</p>
+                    <img src="img/covoiturages/voiture-impasse.png" alt="Voiture dans l'impasse" class="img-fluid mt-3 rounded my-3">
+                </div>
+            `;
+            return;
+        }
+
+        trajetsAAfficher.forEach(trajet => {
+            let formattedDateTime = trajet.date_depart;
+            try {
+                const dateObj = new Date(trajet.date_depart);
+                formattedDateTime = dateObj.toLocaleString(undefined, {
+                    day: 'numeric', month: 'long', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            } catch (_) {}
+
+            const card = document.createElement('div');
+            card.className = 'trajet-card';
+            card.style.border = '1px solid black';
+            card.style.padding = '1rem';
+            card.style.marginBottom = '1rem';
+            card.style.borderRadius = '0.5rem';
+            card.innerHTML = `
+                <h3>Trajet du ${escapeHTML(formattedDateTime)} → ${escapeHTML(formatDuree(trajet.duree))}</h3>
+                <p><strong>Départ :</strong> ${escapeHTML(trajet.adresse_depart)}</p>
+                <p><strong>Arrivée :</strong> ${escapeHTML(trajet.adresse_arrivee)}</p>
+                <p><strong>Énergie :</strong> ${escapeHTML(trajet.energie)}${trajet.voyage_ecologique ? ' → Voyage écologique 🌿' : ''}</p>
+                <p><strong>Chauffeur :</strong> ${escapeHTML(trajet.pseudo)}${trajet.note_moyenne !== null ? ` (${escapeHTML(trajet.note_moyenne)} ⭐)` : ''}</p>
+                <p><strong>Places restantes :</strong> ${escapeHTML(trajet.nb_places_restantes)} / ${escapeHTML(trajet.nb_places_total)}</p>
+                <p><strong>Prix :</strong> ${escapeHTML(trajet.prix)} crédits</p>
+                ${trajet.alternative ? '<p class="text-danger">⚠️ Ce trajet est une proposition alternative à une autre date.</p>' : ''}
+            `;
+            const detailsLink = document.createElement('div');
+            detailsLink.style.textAlign = 'right';
+            detailsLink.innerHTML = `<a href="#" class="details-link">Afficher les détails</a>`;
+            card.appendChild(detailsLink);
+            resultContainer.appendChild(card);
+        });
+    }
+
+	// Filtrage des trajets
+    function filtrerTrajets() {
+        const ecolo = document.getElementById("filtre-ecolo").checked;
+        const prixMax = parseFloat(document.getElementById("filtre-prix").value) || Infinity;
+        const noteMin = parseFloat(document.getElementById("filtre-note").value) || 0;
+		const heures = parseInt(document.getElementById("filtre-duree-heures").value) || 0;
+		const minutes = parseInt(document.getElementById("filtre-duree-minutes").value) || 0;
+		const dureeMax = (heures * 60) + minutes || Infinity;
+
+        const trajetsFiltres = trajets.filter(trajet => {
+            return (!ecolo || trajet.energie === "électrique")
+                && parseFloat(trajet.prix) <= prixMax
+                && convertirDureeEnMinutes(trajet.duree) <= dureeMax
+                && parseFloat(trajet.note_moyenne || 0) >= noteMin;
+        });
+
+        afficherTrajets(trajetsFiltres);
+    }
+
+    document.getElementById("btn-filtrer")?.addEventListener("click", filtrerTrajets);
+
+	// Envoi des données à la page de traitement
     function envoyer_data() {
         const formData = new FormData(form);
         const date = formData.get('date');
@@ -50,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Pré-affichage : état de chargement
         submitButton.disabled = true;
         resultContainer.innerHTML = '<p id="loading-message">Chargement...</p>';
 
@@ -67,48 +150,16 @@ document.addEventListener('DOMContentLoaded', () => {
             resultContainer.innerHTML = '';
 
             if (data?.success && Array.isArray(data.resultats)) {
-                if (data.resultats.length === 0) {
-                    resultContainer.innerHTML = `
-                        <div class="no-results">
-                            <h3>Aucun trajet trouvé</h3>
-                            <p>Nous n'avons pas trouvé de covoiturage correspondant à vos critères.</p>
-                            <img src="img/covoiturages/voiture-impasse.png" alt="Voiture dans l'impasse" class="img-fluid mt-3 rounded my-3">
-                        </div>
-                    `;
-                } else {
-                    data.resultats.forEach(trajet => {
-                        let formattedDateTime = trajet.date_depart;
-                        try {
-                            const dateObj = new Date(trajet.date_depart);
-                            formattedDateTime = dateObj.toLocaleString(undefined, {
-                                day: 'numeric', month: 'long', year: 'numeric',
-                                hour: '2-digit', minute: '2-digit'
-                            });
-                        } catch (_) {}
+                trajets = data.resultats; // Stockage pour filtrage
+				
+				// Affichage des filtres uniquement si résultats trouvés
+				const filtres = document.getElementById('bloc-filtres');
+				if (filtres) {
+					filtres.classList.remove('d-none');
+				}
 
-                        const card = document.createElement('div');
-                        card.className = 'trajet-card';
-                        card.style.border = '1px solid black';
-                        card.style.padding = '1rem';
-                        card.style.marginBottom = '1rem';
-                        card.style.borderRadius = '0.5rem';
-                        card.innerHTML = `
-                            <h3>Trajet du ${escapeHTML(formattedDateTime)} → ${escapeHTML(trajet.duree)}</h3>
-                            <p><strong>Départ :</strong> ${escapeHTML(trajet.adresse_depart)}</p>
-                            <p><strong>Arrivée :</strong> ${escapeHTML(trajet.adresse_arrivee)}</p>
-                            <p><strong>Énergie :</strong> ${escapeHTML(trajet.energie)}${trajet.voyage_ecologique ? ' → 🌿 Voyage écologique' : ''}</p>
-                            <p><strong>Chauffeur :</strong> ${escapeHTML(trajet.pseudo)}${trajet.note_moyenne !== null ? ` (${escapeHTML(trajet.note_moyenne)} ⭐)` : ''}</p>
-                            <p><strong>Places restantes :</strong> ${escapeHTML(trajet.nb_places_restantes)} / ${escapeHTML(trajet.nb_places_total)}</p>
-                            <p><strong>Prix :</strong> ${escapeHTML(trajet.prix)} crédits</p>
-                            ${trajet.alternative ? '<p class="text-danger">⚠️ Ce trajet est une proposition alternative à une autre date.</p>' : ''}
-                        `;
-                        const detailsLink = document.createElement('div');
-                        detailsLink.style.textAlign = 'right';
-                        detailsLink.innerHTML = `<a href="#" class="details-link">Afficher les détails</a>`;
-                        card.appendChild(detailsLink);
-                        resultContainer.appendChild(card);
-                    });
-                }
+				// Affichage des résultats
+                afficherTrajets(trajets);
             } else {
                 const msg = data?.message || 'Réponse inattendue du serveur.';
                 resultContainer.innerHTML = `
@@ -132,13 +183,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Soumission du formulaire
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         envoyer_data();
     });
 
-    // Si les champs sont pré-remplis, lancer automatiquement la recherche
     const depart = form.querySelector('[name="depart"]').value.trim();
     const arrivee = form.querySelector('[name="arrivee"]').value.trim();
     const date = form.querySelector('[name="date"]').value.trim();

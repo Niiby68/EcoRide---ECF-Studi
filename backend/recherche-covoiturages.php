@@ -128,12 +128,12 @@ try {
         $resultats = $altStmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($resultats as &$alt) {
-            $alt['voyage_ecologique'] = ($alt['energie'] === 'electrique');
+            $alt['voyage_ecologique'] = ($alt['energie'] === 'électrique');
             $alt['alternative'] = true;
         }
     } else {
         foreach ($resultats as &$trajet) {
-            $trajet['voyage_ecologique'] = ($trajet['energie'] === 'electrique');
+            $trajet['voyage_ecologique'] = ($trajet['energie'] === 'électrique');
             $trajet['alternative'] = false;
         }
     }
