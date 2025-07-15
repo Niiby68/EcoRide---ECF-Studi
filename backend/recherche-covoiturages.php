@@ -1,7 +1,7 @@
 <?php
 //
 //  Recherche de covoiturages ( Traitement )
-//  /backend/recherche-covoiturages.php
+//  Chemin : /backend/recherche-covoiturages.php
 //
 
 
@@ -10,7 +10,7 @@ header('Content-Type: application/json');
 
 
 
-require_once '../config/db.php';
+require_once('../config/db.php');
 $response = ['success' => false, 'message' => '', 'resultats' => []];
 
 

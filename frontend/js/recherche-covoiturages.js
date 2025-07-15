@@ -10,19 +10,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultContainer = document.getElementById('reponse-trajet');
     const submitButton = form?.querySelector('button[type="submit"]');
 
-	// Sécurité formulaire
+	// Sécurité du formulaire
     if (!form || !resultContainer || !submitButton) {
         console.error("Erreur : Formulaire, conteneur ou bouton non trouvé dans le DOM.");
         alert("Erreur critique détectée : le formulaire ou ses éléments sont introuvables. Veuillez contacter l'administrateur du site.");
         return;
     }
 
+	// Sécurité anti-injection HTML
     const escapeHTML = (str) => {
         const div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
     };
 
+	// Vérification de la date entrée
     const isDateValid = (inputDate) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -92,7 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             const detailsLink = document.createElement('div');
             detailsLink.style.textAlign = 'right';
-            detailsLink.innerHTML = `<a href="#" class="details-link">Afficher les détails</a>`;
+            detailsLink.innerHTML = `
+				<a href="detail-trajet.php?id=${trajet.id}
+				&depart=${encodeURIComponent(form.querySelector('[name=\"depart\"]').value)}
+				&arrivee=${encodeURIComponent(form.querySelector('[name=\"arrivee\"]').value)}
+				&date=${encodeURIComponent(form.querySelector('[name=\"date\"]').value)}"
+				class="details-link">Afficher les détails</a>
+			`;
             card.appendChild(detailsLink);
             resultContainer.appendChild(card);
         });
@@ -183,16 +191,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+	// Ecouteur du bouton "Rechercher"
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         envoyer_data();
     });
 
+	// Récupération des données de recherche
     const depart = form.querySelector('[name="depart"]').value.trim();
     const arrivee = form.querySelector('[name="arrivee"]').value.trim();
     const date = form.querySelector('[name="date"]').value.trim();
 
-    if (depart !== '' || arrivee !== '' || date !== '') {
+	// Lancement automatique de la recherche si pré-remplis
+    if (depart !== '' && arrivee !== '' && date !== '') {
         envoyer_data();
     }
 });
