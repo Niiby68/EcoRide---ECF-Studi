@@ -165,7 +165,7 @@ $avis_list = $avis_stmt->fetchAll(PDO::FETCH_ASSOC);
 		<?php endif; ?>
 
 		<div class="text-center">
-			<a href="covoiturages.php?depart=<?= urlencode($depart) ?>&arrivee=<?= urlencode($arrivee) ?>&date=<?= urlencode($date) ?>" class="btn btn-primary">← Retour aux résultats</a>
+			<a href="covoiturages.php?depart=<?= urlencode($depart) ?>&arrivee=<?= urlencode($arrivee) ?>&date=<?= urlencode($date) ?>&prix=<?= $_GET['prix'] ?? '' ?>&note=<?= $_GET['note'] ?? '' ?>&duree_h=<?= $_GET['duree_h'] ?? '' ?>&duree_m=<?= $_GET['duree_m'] ?? '' ?><?= isset($_GET['ecolo']) ? '&ecolo=1' : '' ?>" class="btn btn-secondary">← Retour aux résultats</a>
 			<a href="#" class="btn btn-primary disabled">Participer à ce trajet</a>
 		</div>
 	</div>

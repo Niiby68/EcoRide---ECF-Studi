@@ -96,9 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
             detailsLink.style.textAlign = 'right';
             detailsLink.innerHTML = `
 				<a href="detail-trajet.php?id=${trajet.id}
-				&depart=${encodeURIComponent(form.querySelector('[name=\"depart\"]').value)}
-				&arrivee=${encodeURIComponent(form.querySelector('[name=\"arrivee\"]').value)}
-				&date=${encodeURIComponent(form.querySelector('[name=\"date\"]').value)}"
+				&depart=${encodeURIComponent(form.querySelector('[name="depart"]').value)}
+				&arrivee=${encodeURIComponent(form.querySelector('[name="arrivee"]').value)}
+				&date=${encodeURIComponent(form.querySelector('[name="date"]').value)}
+				&prix=${encodeURIComponent(document.getElementById("filtre-prix").value)}
+				&note=${encodeURIComponent(document.getElementById("filtre-note").value)}
+				&duree_h=${encodeURIComponent(document.getElementById("filtre-duree-heures").value)}
+				&duree_m=${encodeURIComponent(document.getElementById("filtre-duree-minutes").value)}
+				${document.getElementById("filtre-ecolo").checked ? '&ecolo=1' : ''}"
 				class="details-link">Afficher les détails</a>
 			`;
             card.appendChild(detailsLink);
@@ -203,7 +208,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const date = form.querySelector('[name="date"]').value.trim();
 
 	// Lancement automatique de la recherche si pré-remplis
-    if (depart !== '' && arrivee !== '' && date !== '') {
-        envoyer_data();
-    }
+	if (depart !== '' && arrivee !== '' && date !== '') {
+		envoyer_data();
+
+		// Filtrage automatique après un court délai
+		setTimeout(() => {
+			document.getElementById("btn-filtrer")?.click();
+		}, 300); // délai léger pour laisser le temps au chargement AJAX
+	}
 });

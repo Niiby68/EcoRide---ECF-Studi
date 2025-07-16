@@ -77,37 +77,49 @@ require_once('includes/en-tete.php');
 		</div>
 		
 		<!-- Filtres dynamiques -->
+		<?php
+			$prix = $_GET['prix'] ?? '';
+			$note = $_GET['note'] ?? '';
+			$duree_h = $_GET['duree_h'] ?? '';
+			$duree_m = $_GET['duree_m'] ?? '';
+			$ecolo = (isset($_GET['ecolo']) && $_GET['ecolo'] === '1') ? 'checked' : '';
+		?>
 		<div class="filters card p-3 mb-4 d-none" id="bloc-filtres">
 			<div class="row g-2 align-items-end">
 				<div class="col-md-4">
-					<label for="filtre-prix" class="form-label">Prix maximum (€)</label>
-					<input type="number" id="filtre-prix" class="form-control" min="0" step="1">
+					<label for="filtre-prix" class="form-label">Prix maximum (crédits)</label>
+					<input type="number" id="filtre-prix" class="form-control" name="prix" min="0" step="1" value="<?= htmlspecialchars($prix) ?>">
 				</div>
 				
 				<div class="col-md-4">
 					<label class="form-label">Durée maximale</label>
 					<div class="d-flex gap-2">
-						<select id="filtre-duree-heures" class="form-select">
+						<select id="filtre-duree-heures" class="form-select" name="duree_h">
 							<option value="">Heures</option>
-							<?php for ($i = 0; $i <= 24; $i++) echo "<option value=\"$i\">$i h</option>"; ?>
+							<?php for ($i = 0; $i <= 24; $i++): ?>
+								<option value="<?= $i ?>" <?= ($duree_h == $i) ? 'selected' : '' ?>><?= $i ?> h</option>
+							<?php endfor; ?>
 						</select>
-						<select id="filtre-duree-minutes" class="form-select">
+
+						<select id="filtre-duree-minutes" class="form-select" name="duree_m">
 							<option value="">Minutes</option>
-							<?php for ($i = 0; $i <= 59; $i += 5) echo "<option value=\"$i\">$i mn</option>"; ?>
+							<?php for ($i = 0; $i <= 55; $i += 5): ?>
+								<option value="<?= $i ?>" <?= ($duree_m == $i) ? 'selected' : '' ?>><?= $i ?> mn</option>
+							<?php endfor; ?>
 						</select>
 					</div>
 				</div>
 
 				<div class="col-md-4">
 					<label for="filtre-note" class="form-label">Note minimum du chauffeur</label>
-					<input type="number" id="filtre-note" class="form-control" min="0" max="5" step="0.1" value="0">
+					<input type="number" id="filtre-note" class="form-control" name="note" min="0" max="5" step="0.1" value="<?= htmlspecialchars($note) ?>">
 				</div>
 			</div>
 
 			<div class="row g-2 mt-3">
 				<div class="col-md-6">
 					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="filtre-ecolo">
+						<input type="checkbox" class="form-check-input" id="filtre-ecolo" name="ecolo" <?= $ecolo ?>>
 						<label class="form-check-label" for="filtre-ecolo">Voyages écologiques 🌿 (électriques uniquement)</label>
 					</div>
 				</div>
