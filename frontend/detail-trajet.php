@@ -57,6 +57,14 @@ if (!$trajet) {
     exit("Trajet introuvable.");
 }
 
+// Récupération des crédits utilisateur si connecté
+$credits_utilisateur = null;
+if ($is_connected) {
+    $stmt_credit = $pdo->prepare("SELECT credits FROM utilisateurs WHERE id = :id");
+    $stmt_credit->execute([':id' => $_SESSION['user_id']]);
+    $credits_utilisateur = $stmt_credit->fetchColumn();
+}
+
 // Récupération des avis
 $avis_stmt = $pdo->prepare("SELECT a.note, a.commentaire FROM avis a JOIN participations p ON a.participation_id = p.id WHERE p.trajet_id = :id AND a.valide = 1");
 $avis_stmt->execute([':id' => $trajet_id]);
@@ -165,8 +173,20 @@ $avis_list = $avis_stmt->fetchAll(PDO::FETCH_ASSOC);
 		<?php endif; ?>
 
 		<div class="text-center">
-			<a href="covoiturages.php?depart=<?= urlencode($depart) ?>&arrivee=<?= urlencode($arrivee) ?>&date=<?= urlencode($date) ?>&prix=<?= $_GET['prix'] ?? '' ?>&note=<?= $_GET['note'] ?? '' ?>&duree_h=<?= $_GET['duree_h'] ?? '' ?>&duree_m=<?= $_GET['duree_m'] ?? '' ?><?= isset($_GET['ecolo']) ? '&ecolo=1' : '' ?>" class="btn btn-secondary">← Retour aux résultats</a>
-			<a href="#" class="btn btn-primary disabled">Participer à ce trajet</a>
+			<a href="covoiturages.php?depart=<?= urlencode($depart) ?>&arrivee=<?= urlencode($arrivee) ?>&date=<?= urlencode($date) ?>&prix=<?= $_GET['prix'] ?? '' ?>&note=<?= $_GET['note'] ?? '' ?>&duree_h=<?= $_GET['duree_h'] ?? '' ?>&duree_m=<?= $_GET['duree_m'] ?? '' ?><?= isset($_GET['ecolo']) ? '&ecolo=1' : '' ?>" class="btn btn-primary">← Retour aux résultats</a>
+			<?php if (!$is_connected): ?>
+				<a href="login.php" class="btn btn-warning">Se connecter</a>
+				<a href="signup.php" class="btn btn-warning">Créer un compte</a>
+			<?php else: ?>
+				<?php if ($trajet['nb_places_restantes'] <= 0): ?>
+					<button class="btn btn-primary" disabled>Plus aucune place disponible</button>
+				<?php elseif ($credits_utilisateur < $trajet['prix']): ?>
+					<button class="btn btn-primary" disabled>Crédits insuffisants</button>
+					<p class="text-danger mt-2">Il vous manque <?= $trajet['prix'] - $credits_utilisateur ?> crédits pour ce trajet.</p>
+				<?php else: ?>
+					<a href="participer.php?trajet_id=<?= $trajet['id'] ?>" class="btn btn-primary">Participer à ce trajet</a>
+				<?php endif; ?>
+			<?php endif; ?>
 		</div>
 	</div>
 
