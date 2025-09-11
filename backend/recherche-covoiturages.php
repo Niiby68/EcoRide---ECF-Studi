@@ -1,7 +1,7 @@
 <?php
 //
 //  Recherche de covoiturages ( Traitement )
-//  Chemin : /backend/recherche-covoiturages.php
+//  /backend/recherche-covoiturages.php
 //
 
 
@@ -10,7 +10,7 @@ header('Content-Type: application/json');
 
 
 
-require_once('../config/db.php');
+require_once '../config/db.php';
 $response = ['success' => false, 'message' => '', 'resultats' => []];
 
 
@@ -88,8 +88,8 @@ try {
            AND UPPER(TRIM(SUBSTRING_INDEX(t.adresse_arrivee, ' ', -1))) = :ville_arrivee
            AND DATE(t.date_depart) = :date
            AND t.nb_places_restantes >= 1
-           AND t.statut = 'en_cours'"
-    );
+           AND t.statut IN ('à_venir', 'en_cours')"
+    );;
 
     $stmt->execute([
         'ville_depart'  => $depart,
@@ -114,8 +114,10 @@ try {
              JOIN vehicules v ON t.vehicule_id = v.id
              WHERE UPPER(TRIM(SUBSTRING_INDEX(t.adresse_depart, ' ', -1))) = :ville_depart
                AND UPPER(TRIM(SUBSTRING_INDEX(t.adresse_arrivee, ' ', -1))) = :ville_arrivee
-               AND t.statut = 'en_cours'
-             ORDER BY ABS(DATEDIFF(DATE(t.date_depart), :date)) ASC
+               AND t.statut IN ('à_venir', 'en_cours')
+               AND DATE(t.date_depart) >= :date
+               AND t.nb_places_restantes >= 1
+             ORDER BY DATEDIFF(DATE(t.date_depart), :date) ASC
              LIMIT 3"
         );
 

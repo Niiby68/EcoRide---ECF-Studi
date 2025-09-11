@@ -14,7 +14,7 @@ CREATE TABLE utilisateurs (
     pseudo VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     mot_de_passe VARCHAR(255) NOT NULL,
-    photo VARCHAR(100) NOT NULL DEFAULT 'defaut.png',
+    photo VARCHAR(255) DEFAULT NULL,
     credits INT DEFAULT 20,
     role ENUM('passager', 'chauffeur', 'les_deux') DEFAULT 'passager',
     date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -64,6 +64,7 @@ CREATE TABLE participations (
     valide BOOLEAN DEFAULT FALSE,
     probleme_signale BOOLEAN DEFAULT FALSE,
     commentaire TEXT,
+    UNIQUE (utilisateur_id, trajet_id),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
     FOREIGN KEY (trajet_id) REFERENCES trajets(id) ON DELETE CASCADE
 );

@@ -3,7 +3,9 @@
 //  Chemin : /frontend/js/recherche-covoiturages.js
 //
 
-document.addEventListener('DOMContentLoaded', () => {
+
+
+document.addEventListener('DOMContentLoaded', function () {
     let trajets = []; // Stockage global pour filtrage
 
     const form = document.getElementById('form-recherche-trajet');

@@ -25,8 +25,9 @@ try {
     );
 
     // Récupération des données du formulaire
-    $email    = $_POST['email']        ?? '';
+    $email = $_POST['email'] ?? '';
     $password = $_POST['mot_de_passe'] ?? '';
+	$next = $_POST['next'] ?? '';
 
     // Validation basique
     if (empty($email) || empty($password)) {
@@ -50,19 +51,39 @@ try {
     $_SESSION['user_id'] = $data['id'];
     $_SESSION['pseudo']  = $data['pseudo'];
     $_SESSION['role']    = $data['role'];
+	
+	// Calcul de la redirection sécurisée
+    $redirect = '/frontend/index.php'; // valeur par défaut
+    if (!empty($next)) {
+        $parts  = parse_url($next);
+        $path   = $parts['path']  ?? '';
+        $query  = isset($parts['query']) ? ('?'.$parts['query']) : '';
+        $host   = $parts['host']  ?? '';
+        $scheme = $parts['scheme']?? '';
+
+        // Autoriser uniquement une URL interne relative commençant par '/'
+        if ($scheme === '' && $host === '' && str_starts_with($path, '/')) {
+            $redirect = $path.$query;
+        }
+    }
 
     if ($is_ajax) {
         // Réponse JSON pour AJAX
         header('Content-Type: application/json');
-        echo json_encode([
-            'success'  => true,
-            'message'  => 'Connexion réussie ! Redirection vers l\'accueil..',
-            'redirect' => 'index.php'
-        ]);
+
+        $payload = [
+            'success' => true,
+            'message' => 'Connexion réussie !'
+        ];
+        if (!empty($next) && $redirect !== '/frontend/index.php') {
+            $payload['redirect'] = $redirect;
+        }
+
+        echo json_encode($payload);
         exit;
     } else {
         // Redirection classique
-        header('Location: ../frontend/index.php');
+        header('Location: '.$redirect);
         exit;
     }
 

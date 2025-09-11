@@ -79,6 +79,7 @@ require_once('includes/en-tete.php');
 		<div class="card">
 			<div class="card-body">
 				<form id="form-inscription" method="post" action="../backend/signup_traitement.php">
+					<input type="hidden" name="next" value="<?= htmlspecialchars($_GET['next'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 					<div class="mb-3">
 						<label for="pseudo" class="form-label">Pseudo</label>
 						<input type="text" class="form-control" id="pseudo" name="pseudo" required>
@@ -99,7 +100,7 @@ require_once('includes/en-tete.php');
 							<option value="les_deux">Les deux</option>
 						</select>
 					</div>
-					<button type="submit" class="btn btn-primary pb-2">S'inscrire</button>
+					<button id="validation" type="submit" class="btn btn-primary pb-2">S'inscrire</button>
 				</form>
 			</div>
 		</div>

@@ -1,20 +1,36 @@
 //
-//	Page d'inscription ( Javascript )
-//	Chemin : /frontend/js/signup.js
+//  Page d'inscription ( Javascript )
+//  Chemin : /frontend/js/signup.js
 //
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("form-inscription");
-  const messageBox = document.getElementById("form-message");
-  const messageText = document.getElementById("form-message-text");
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('form-inscription');
+  const messageBox = document.getElementById('form-message');
+  const messageText = document.getElementById('form-message-text');
+  const validationBtn = document.getElementById('validation');
 
   if (!form) return;
 
-  form.addEventListener("submit", function (e) {
+  const nextField = form.querySelector('input[name="next"]');
+  
+  if (nextField && !nextField.value) {
+    const params = new URLSearchParams(location.search);
+    nextField.value = params.get('next') || '';
+  }
+
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
     const formData = new FormData(form);
+
+    let originalHTML = '';
+    if (validationBtn) {
+      validationBtn.disabled = true;
+      originalHTML = validationBtn.innerHTML;
+      validationBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Inscription…';
+    }
 
     fetch('/backend/signup_traitement.php', {
       method: 'POST',
@@ -28,22 +44,27 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.success) {
         messageBox.classList.add('alert-success');
         messageText.textContent = data.message;
-        form.reset();
-        if (data.redirect) {
-          setTimeout(() => {
-            window.location.href = data.redirect;
-          }, 1500);
-        }
+
+        const target = data.redirect || 'index.php';
+        setTimeout(() => { window.location.href = target; }, 1500);
       } else {
+        if (validationBtn) {
+          validationBtn.disabled = false;
+          validationBtn.innerHTML = originalHTML || 'Valider';
+        }
         messageBox.classList.add('alert-danger');
-        messageText.textContent = data.message;
+        messageText.textContent = data.message || "L'inscription a échoué.";
       }
     })
     .catch(error => {
       console.error('Erreur AJAX :', error);
+      if (validationBtn) {
+        validationBtn.disabled = false;
+        validationBtn.innerHTML = originalHTML || 'Valider';
+      }
       messageBox.classList.remove('d-none','alert-success');
       messageBox.classList.add('alert-danger');
-      messageText.textContent = "Une erreur technique est survenue.";
+      messageText.textContent = 'Une erreur technique est survenue.';
     });
   });
 });

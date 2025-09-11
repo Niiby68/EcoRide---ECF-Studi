@@ -88,6 +88,7 @@ require_once('includes/en-tete.php');
 		<div class="card">
 			<div class="card-body">
 				<form id="form-login" method="post" action="../backend/login_traitement.php">
+					<input type="hidden" name="next" value="<?= htmlspecialchars($_GET['next'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 					<div class="mb-3">
 						<label for="email" class="form-label">Adresse email</label>
 						<input type="email" class="form-control" id="email" name="email" required>
@@ -96,7 +97,7 @@ require_once('includes/en-tete.php');
 						<label for="mot_de_passe" class="form-label">Mot de passe</label>
 						<input type="password" class="form-control" id="mot_de_passe" name="mot_de_passe" required>
 					</div>
-					<button type="submit" class="btn btn-primary pb-2">Se connecter</button>
+					<button id="validation" type="submit" class="btn btn-primary pb-2">Se connecter</button>
 				</form>
 			</div>
 		</div>		
