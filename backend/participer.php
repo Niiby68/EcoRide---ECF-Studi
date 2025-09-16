@@ -13,7 +13,7 @@ require_once('../config/db.php');
 
 // Vérification de la connexion
 if (!isset($_SESSION['user_id'])) {
-    $next = $_GET['next'] ?? '/frontend/covoiturages.php';
+    $next = $_POST['next'] ?? '/frontend/covoiturages.php';
     $redirect = rawurldecode($next);
     if (!preg_match('#^/frontend/#', $redirect)) {
         $redirect = '/frontend/covoiturages.php';
@@ -24,21 +24,45 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$user_id   = (int) $_SESSION['user_id'];
-$trajet_id = isset($_GET['trajet_id']) ? (int) $_GET['trajet_id'] : 0;
+$user_id = (int) $_SESSION['user_id'];
+
+
+
+// Vérification CSRF
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' 
+    || empty($_POST['csrf_token']) 
+    || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+
+    if (!empty($_POST['trajet_id'])) {
+        $redirect = "/frontend/detail-trajet.php?id=" . (int)$_POST['trajet_id'];
+    } else {
+        $redirect = "/frontend/covoiturages.php";
+    }
+    header("Location: {$redirect}?erreur=csrf");
+    exit;
+}
+
+
+
+// Régénération du token par sécurité
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 
 
 // Reconstruction propre du redirect
-$rawNext  = $_GET['next'] ?? '/frontend/covoiturages.php';
+$rawNext  = $_POST['next'] ?? '/frontend/covoiturages.php';
 $redirect = rawurldecode($rawNext);
 if (!preg_match('#^/frontend/#', $redirect)) {
     $redirect = '/frontend/covoiturages.php';
 }
 $sep = (strpos($redirect, '?') !== false) ? '&' : '?';
 
+
+
+// Récupération et validation du trajet_id
+$trajet_id = isset($_POST['trajet_id']) ? (int) $_POST['trajet_id'] : 0;
 if (!$trajet_id) {
-    header("Location: {$redirect}{$sep}erreur=inconnu");
+    header("Location: {$redirect}{$sep}erreur=trajet");
     exit;
 }
 
@@ -55,7 +79,7 @@ $stmt->execute([':id' => $trajet_id]);
 $trajet = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$trajet) {
-    header("Location: {$redirect}{$sep}erreur=inconnu");
+    header("Location: {$redirect}{$sep}erreur=trajet");
     exit;
 }
 
@@ -63,7 +87,7 @@ if (!$trajet) {
 
 // Empêcher le chauffeur de s’inscrire à son propre trajet
 if ((int)$trajet['chauffeur_id'] === $user_id) {
-    header("Location: {$redirect}{$sep}erreur=inconnu");
+    header("Location: {$redirect}{$sep}erreur=chauffeur");
     exit;
 }
 
@@ -128,6 +152,6 @@ try {
         $pdo->rollBack();
     }
     error_log("Erreur participation : " . $e->getMessage());
-    header("Location: {$redirect}{$sep}erreur=inconnu");
+    header("Location: {$redirect}{$sep}erreur=exception");
     exit;
 }

@@ -55,16 +55,17 @@ try {
         throw new Exception("Tous les champs sont requis.");
     }
 
-    if (!preg_match("/^[\p{L}\s'\-]{2,}\$/u", $depart)) {
-        throw new Exception("Ville de départ invalide.");
-    }
-    if (!preg_match("/^[\p{L}\s'\-]{2,}\$/u", $arrivee)) {
+    if (!preg_match("/^[\p{L}0-9\s'\-]+$/u", $depart)) {
+		throw new Exception("Ville de départ invalide.");
+	}
+	
+    if (!preg_match("/^[\p{L}0-9\s'\-]+$/u", $arrivee)) {
         throw new Exception("Ville d’arrivée invalide.");
     }
 
     $dateObj = DateTime::createFromFormat('Y-m-d', $date);
     if (!$dateObj || $dateObj->format('Y-m-d') !== $date) {
-        throw new Exception("Date invalide. Format attendu : JJ/MM/AAAA.");
+        throw new Exception("Veuillez entrer une date valide (exemple : 15/09/2025).");
     }
 
     $today = new DateTime('today');

@@ -111,6 +111,16 @@ if (isset($_GET['duree_m'])) { $backParams['duree_m'] = $_GET['duree_m']; }
 if (isset($_GET['ecolo']))   { $backParams['ecolo']   = '1'; }
 
 $backQuery = http_build_query($backParams, arg_separator: '&', encoding_type: PHP_QUERY_RFC3986);
+
+
+
+// Génération du jeton CSRF si non existant
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -164,25 +174,54 @@ $backQuery = http_build_query($backParams, arg_separator: '&', encoding_type: PH
 		<div class="alert alert-danger text-center">
 		<?php
 			switch ($_GET['erreur']) {
-			case 'credits':
-			echo "Vous n'avez pas suffisamment de crédits pour ce trajet.";
-			break;
-			case 'places':
-			echo "Il ne reste plus assez de places disponibles pour ce trajet.";
-			break;
-			case 'deja':
-			echo "Vous êtes déjà inscrit à ce trajet.";
-			break;
-			case 'nonco':
-			echo "Vous devez être connecté pour participer à ce trajet.";
-			break;
-			case 'inconnu':
-			echo "Une erreur inattendue est survenue.";
-			break;
-			default:
-			echo "Une erreur est survenue.";
-			break;
-		}
+				case 'credits':
+					echo "❌ Vous n'avez pas suffisamment de crédits pour ce trajet.";
+					echo "<br><a href=\"covoiturages.php?" . htmlspecialchars($backQuery, ENT_QUOTES, 'UTF-8') . "\" class=\"btn btn-sm btn-secondary mt-2\">← Retour aux résultats</a>";
+					break;
+
+				case 'places':
+					echo "❌ Il ne reste plus assez de places disponibles pour ce trajet.";
+					echo "<br><a href=\"covoiturages.php?" . htmlspecialchars($backQuery, ENT_QUOTES, 'UTF-8') . "\" class=\"btn btn-sm btn-secondary mt-2\">← Retour aux résultats</a>";
+					break;
+
+				case 'deja':
+					echo "⚠️ Vous êtes déjà inscrit à ce trajet.";
+					echo "<br><a href=\"covoiturages.php?" . htmlspecialchars($backQuery, ENT_QUOTES, 'UTF-8') . "\" class=\"btn btn-sm btn-secondary mt-2\">← Retour aux résultats</a>";
+					break;
+
+				case 'nonco':
+					echo "🔑 Vous devez être connecté pour participer à ce trajet.";
+					echo "<br><a href=\"login.php?next=" . $current_url . "\" class=\"btn btn-sm btn-primary mt-2\">Se connecter</a> ";
+					echo "<a href=\"signup.php?next=" . $current_url . "\" class=\"btn btn-sm btn-outline-primary mt-2\">Créer un compte</a>";
+					break;
+
+				case 'trajet':
+					echo "❌ Le trajet demandé est introuvable ou invalide.";
+					echo "<br><a href=\"covoiturages.php\" class=\"btn btn-sm btn-secondary mt-2\">← Retour aux covoiturages</a>";
+					break;
+
+				case 'chauffeur':
+					echo "🚫 Vous ne pouvez pas vous inscrire à votre propre trajet.";
+					echo "<br><a href=\"covoiturages.php?" . htmlspecialchars($backQuery, ENT_QUOTES, 'UTF-8') . "\" class=\"btn btn-sm btn-secondary mt-2\">← Retour aux résultats</a>";
+					break;
+
+				case 'csrf':
+					echo "⚠️ Sécurité : votre session a expiré, veuillez "
+						. "<a href=\"detail-trajet.php?id=" 
+						. htmlspecialchars($trajet_id, ENT_QUOTES, 'UTF-8') 
+						. "\">réessayer</a>.";
+					break;
+
+				case 'exception':
+					echo "❌ Une erreur technique est survenue. Merci de réessayer plus tard.";
+					echo "<br><a href=\"covoiturages.php\" class=\"btn btn-sm btn-secondary mt-2\">← Retour aux covoiturages</a>";
+					break;
+
+				default:
+					echo "❌ Une erreur inattendue est survenue.";
+					echo "<br><a href=\"covoiturages.php\" class=\"btn btn-sm btn-secondary mt-2\">← Retour aux covoiturages</a>";
+					break;
+			}
 		?>
 		</div>
 		<?php endif; ?>
@@ -274,12 +313,14 @@ $backQuery = http_build_query($backParams, arg_separator: '&', encoding_type: PH
                         crédits pour ce trajet.
                     </p>
                 <?php else: ?>
-                    <button 
-						id="btn-participer"
-						class="btn btn-primary"
-						data-url="../backend/participer.php?trajet_id=<?= htmlspecialchars((string)$trajet['id'], ENT_QUOTES, 'UTF-8') ?>&next=<?= $current_url ?>">
-						Participer à ce trajet
-					</button>
+					<form id="form-participer" method="POST" action="../backend/participer.php" class="d-inline">
+						<input type="hidden" name="trajet_id" value="<?= htmlspecialchars((string)$trajet['id'], ENT_QUOTES, 'UTF-8') ?>">
+						<input type="hidden" name="next" value="<?= $current_url ?>">
+						<input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+						<button type="button" id="btn-participer" class="btn btn-primary">
+							Participer à ce trajet
+						</button>
+					</form>
                 <?php endif; ?>
             <?php endif; ?>
         </div>
