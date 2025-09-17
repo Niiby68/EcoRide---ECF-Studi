@@ -22,6 +22,13 @@ $chemin_racine = '../';
 require_once('includes/pied-de-page.php');
 require_once('includes/javamess.php');
 require_once('includes/en-tete.php');
+
+
+
+// Génération du jeton CSRF si non existant
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 ?>
 
 
@@ -79,6 +86,7 @@ require_once('includes/en-tete.php');
 		<div class="card">
 			<div class="card-body">
 				<form id="form-inscription" method="post" action="../backend/signup_traitement.php">
+					<input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
 					<input type="hidden" name="next" value="<?= htmlspecialchars($_GET['next'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 					<div class="mb-3">
 						<label for="pseudo" class="form-label">Pseudo</label>

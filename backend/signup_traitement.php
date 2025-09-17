@@ -7,14 +7,48 @@
 
 
 session_start();
-
-
-
-// Détection AJAX
-$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-
 require_once 'models/Utilisateur.php';
 
+
+
+//
+// Autoriser uniquement POST
+//
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405); // Method Not Allowed
+    exit('Méthode non autorisée.');
+}
+
+
+
+//
+// Vérification du token CSRF
+//
+if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+    http_response_code(403); // Forbidden
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Échec de la vérification CSRF.']);
+    } else {
+        header("Location: ../frontend/signup.php?error=" . urlencode("Échec de la vérification CSRF."));
+    }
+    exit;
+}
+
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+
+
+//
+// Détection AJAX
+//
+$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+
+
+//
+//	Traitement des données
+//
 $response = ['success' => false, 'message' => 'Une erreur est survenue.'];
 
 try {

@@ -45,7 +45,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		return `${h}${h && m ? ' ' : ''}${m}` || '0mn';
 	}
 	
-	// Conversation la durée TIME en minutes
+	// Conversion de la durée TIME en minutes totales
+	// - Retourne un entier en minutes si le format est correct
+	// - Retourne Infinity si la durée est absente/invalide
+	//   → Cela permet d'accepter ce trajet si l'utilisateur n'a PAS mis de limite
+	//   → Mais de l'exclure si l'utilisateur impose une durée max
 	function convertirDureeEnMinutes(dureeStr) {
 		if (!dureeStr || !dureeStr.includes(':')) return Infinity;
 
@@ -53,50 +57,59 @@ document.addEventListener('DOMContentLoaded', function () {
 		return (heures * 60) + minutes + Math.floor(secondes / 60);
 	}
 
-	// Affichage des trajets
-    function afficherTrajets(trajetsAAfficher) {
-        resultContainer.innerHTML = '';
+	function afficherTrajets(trajetsAAfficher) {
+		resultContainer.innerHTML = '';
 
-        if (trajetsAAfficher.length === 0) {
-            resultContainer.innerHTML = `
-                <div class="no-results">
-                    <h3>Aucun trajet trouvé</h3>
-                    <p>Nous n'avons pas trouvé de covoiturage correspondant à vos critères.</p>
-                    <img src="img/covoiturages/voiture-impasse.png" alt="Voiture dans l'impasse" class="img-fluid mt-3 rounded my-3">
-                </div>
-            `;
-            return;
-        }
+		if (trajetsAAfficher.length === 0) {
+			resultContainer.innerHTML = `
+				<div class="no-results">
+					<h3>Aucun trajet trouvé</h3>
+					<p>Nous n'avons pas trouvé de covoiturage correspondant à vos critères.</p>
+					<img src="img/covoiturages/voiture-impasse.png" alt="Voiture dans l'impasse" class="img-fluid mt-3 rounded my-3">
+				</div>
+			`;
+			return;
+		}
 
-        trajetsAAfficher.forEach(trajet => {
-            let formattedDateTime = trajet.date_depart;
-            try {
-                const dateObj = new Date(trajet.date_depart);
-                formattedDateTime = dateObj.toLocaleString(undefined, {
-                    day: 'numeric', month: 'long', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                });
-            } catch (_) {}
+		trajetsAAfficher.forEach(trajet => {
+			let formattedDateTime = trajet.date_depart;
+			try {
+				const dateObj = new Date(trajet.date_depart);
+				formattedDateTime = dateObj.toLocaleString(undefined, {
+					day: 'numeric', month: 'long', year: 'numeric',
+					hour: '2-digit', minute: '2-digit'
+				});
+			} catch (_) {}
 
-            const card = document.createElement('div');
-            card.className = 'trajet-card';
-            card.style.border = '1px solid black';
-            card.style.padding = '1rem';
-            card.style.marginBottom = '1rem';
-            card.style.borderRadius = '0.5rem';
-            card.innerHTML = `
-                <h3>Trajet du ${escapeHTML(formattedDateTime)} → ${escapeHTML(formatDuree(trajet.duree))}</h3>
-                <p><strong>Départ :</strong> ${escapeHTML(trajet.adresse_depart)}</p>
-                <p><strong>Arrivée :</strong> ${escapeHTML(trajet.adresse_arrivee)}</p>
-                <p><strong>Énergie :</strong> ${escapeHTML(trajet.energie)}${trajet.voyage_ecologique ? ' → Voyage écologique 🌿' : ''}</p>
-                <p><strong>Chauffeur :</strong> ${escapeHTML(trajet.pseudo)}${trajet.note_moyenne !== null ? ` (${escapeHTML(trajet.note_moyenne)} ⭐)` : ''}</p>
-                <p><strong>Places restantes :</strong> ${escapeHTML(trajet.nb_places_restantes)} / ${escapeHTML(trajet.nb_places_total)}</p>
-                <p><strong>Prix :</strong> ${escapeHTML(trajet.prix)} crédits</p>
-                ${trajet.alternative ? '<p class="text-danger">⚠️ Ce trajet est une proposition alternative à une autre date.</p>' : ''}
-            `;
-            const detailsLink = document.createElement('div');
-            detailsLink.style.textAlign = 'right';
-            detailsLink.innerHTML = `
+			const card = document.createElement('div');
+			card.className = 'trajet-card' + (trajet.deja_participe == 1 ? ' participe' : '');
+			card.style.border = '1px solid black';
+			card.style.padding = '1rem';
+			card.style.marginBottom = '1rem';
+			card.style.borderRadius = '0.5rem';
+			card.innerHTML = `
+				<h3>
+					Trajet du ${escapeHTML(formattedDateTime)} → ${escapeHTML(formatDuree(trajet.duree))}
+					${trajet.deja_participe == 1 ? '<span class="badge bg-success ms-2">Déjà inscrit</span>' : ''}
+				</h3>
+				<p><strong>Départ :</strong> ${escapeHTML(trajet.adresse_depart)}</p>
+				<p><strong>Arrivée :</strong> ${escapeHTML(trajet.adresse_arrivee)}</p>
+				<p><strong>Énergie :</strong> ${escapeHTML(trajet.energie)}${trajet.voyage_ecologique ? ' → Voyage écologique 🌿' : ''}</p>
+				<p><strong>Chauffeur :</strong> ${escapeHTML(trajet.pseudo)}${trajet.note_moyenne !== null ? ` (${escapeHTML(trajet.note_moyenne)} ⭐)` : ''}</p>
+				<p><strong>Places restantes :</strong> ${escapeHTML(trajet.nb_places_restantes)} / ${escapeHTML(trajet.nb_places_total)}</p>
+				<p><strong>Prix :</strong> ${escapeHTML(trajet.prix)} crédits</p>
+				<p><strong>Options :</strong> 
+					${trajet.fumeur == 1 ? "🚬 Fumeur accepté" : "🚭 Non-fumeur"} | 
+					${trajet.animaux == 1 ? "🐾 Animaux acceptés" : "🚫 Pas d'animaux"}
+				</p>
+				${trajet.deja_participe == 1 
+					? '<div class="alert alert-success mt-2 fw-bold text-center">✅ Vous participez déjà à ce trajet</div>' 
+					: ''}
+				${trajet.alternative ? '<p class="text-danger">⚠️ Ce trajet est une proposition alternative à une autre date.</p>' : ''}
+			`;
+			const detailsLink = document.createElement('div');
+			detailsLink.style.textAlign = 'right';
+			detailsLink.innerHTML = `
 				<a href="detail-trajet.php?id=${trajet.id}
 				&depart=${encodeURIComponent(form.querySelector('[name="depart"]').value)}
 				&arrivee=${encodeURIComponent(form.querySelector('[name="arrivee"]').value)}
@@ -108,10 +121,10 @@ document.addEventListener('DOMContentLoaded', function () {
 				${document.getElementById("filtre-ecolo").checked ? '&ecolo=1' : ''}"
 				class="details-link">Afficher les détails</a>
 			`;
-            card.appendChild(detailsLink);
-            resultContainer.appendChild(card);
-        });
-    }
+			card.appendChild(detailsLink);
+			resultContainer.appendChild(card);
+		});
+	}
 
 	// Filtrage des trajets
     function filtrerTrajets() {

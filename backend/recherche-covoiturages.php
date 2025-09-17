@@ -1,17 +1,24 @@
 <?php
 //
 //  Recherche de covoiturages ( Traitement )
-//  /backend/recherche-covoiturages.php
+//  Chemin : /backend/recherche-covoiturages.php
 //
 
 
 
 header('Content-Type: application/json');
 
-
-
 require_once '../config/db.php';
+session_start();
+
 $response = ['success' => false, 'message' => '', 'resultats' => []];
+
+
+
+//
+// Vérifie si un utilisateur est connecté
+//
+$user_id = $_SESSION['user_id'] ?? null;
 
 
 
@@ -56,9 +63,8 @@ try {
     }
 
     if (!preg_match("/^[\p{L}0-9\s'\-]+$/u", $depart)) {
-		throw new Exception("Ville de départ invalide.");
-	}
-	
+        throw new Exception("Ville de départ invalide.");
+    }
     if (!preg_match("/^[\p{L}0-9\s'\-]+$/u", $arrivee)) {
         throw new Exception("Ville d’arrivée invalide.");
     }
@@ -73,61 +79,91 @@ try {
         throw new Exception("La date de départ ne peut pas être antérieure à aujourd’hui.");
     }
 
-    // Requête enrichie avec pseudo, énergie, et note moyenne via sous-requête
-    $stmt = $pdo->prepare(
-        "SELECT t.*, t.duree, u.pseudo, v.energie,
-                (
-                    SELECT ROUND(AVG(a.note), 1)
-                    FROM participations pa
-                    JOIN avis a ON a.participation_id = pa.id
-                    WHERE pa.trajet_id = t.id
-                ) AS note_moyenne
-         FROM trajets t
-         JOIN utilisateurs u ON t.chauffeur_id = u.id
-         JOIN vehicules v ON t.vehicule_id = v.id
-         WHERE UPPER(TRIM(SUBSTRING_INDEX(t.adresse_depart, ' ', -1))) = :ville_depart
-           AND UPPER(TRIM(SUBSTRING_INDEX(t.adresse_arrivee, ' ', -1))) = :ville_arrivee
-           AND DATE(t.date_depart) = :date
-           AND t.nb_places_restantes >= 1
-           AND t.statut IN ('à_venir', 'en_cours')"
-    );;
 
-    $stmt->execute([
+
+    //
+    // Recherche du trajet demandé
+    //
+    $sql = "
+        SELECT t.*, t.duree, u.pseudo, v.energie,
+               (
+                   SELECT ROUND(AVG(a.note), 1)
+                   FROM participations pa
+                   JOIN avis a ON a.participation_id = pa.id
+                   WHERE pa.trajet_id = t.id
+               ) AS note_moyenne
+               " . ($user_id ? ",
+               EXISTS (
+                   SELECT 1 FROM participations p
+                   WHERE p.trajet_id = t.id
+                   AND p.utilisateur_id = :user_id
+               ) AS deja_participe" : "") . "
+        FROM trajets t
+        JOIN utilisateurs u ON t.chauffeur_id = u.id
+        JOIN vehicules v ON t.vehicule_id = v.id
+        WHERE UPPER(TRIM(SUBSTRING_INDEX(t.adresse_depart, ' ', -1))) = :ville_depart
+          AND UPPER(TRIM(SUBSTRING_INDEX(t.adresse_arrivee, ' ', -1))) = :ville_arrivee
+          AND DATE(t.date_depart) = :date
+          AND t.nb_places_restantes >= 1
+          AND t.statut IN ('à_venir', 'en_cours')
+    ";
+
+    $stmt = $pdo->prepare($sql);
+
+    $params = [
         'ville_depart'  => $depart,
         'ville_arrivee' => $arrivee,
         'date'          => $date
-    ]);
+    ];
+    if ($user_id) {
+        $params['user_id'] = $user_id;
+    }
 
+    $stmt->execute($params);
     $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if (empty($resultats)) {
-        // Recherche d'alternatives à une autre date
-        $altStmt = $pdo->prepare(
-            "SELECT t.*, t.duree, u.pseudo, v.energie,
-                    (
-                        SELECT ROUND(AVG(a.note), 1)
-                        FROM participations pa
-                        JOIN avis a ON a.participation_id = pa.id
-                        WHERE pa.trajet_id = t.id
-                    ) AS note_moyenne
-             FROM trajets t
-             JOIN utilisateurs u ON t.chauffeur_id = u.id
-             JOIN vehicules v ON t.vehicule_id = v.id
-             WHERE UPPER(TRIM(SUBSTRING_INDEX(t.adresse_depart, ' ', -1))) = :ville_depart
-               AND UPPER(TRIM(SUBSTRING_INDEX(t.adresse_arrivee, ' ', -1))) = :ville_arrivee
-               AND t.statut IN ('à_venir', 'en_cours')
-               AND DATE(t.date_depart) >= :date
-               AND t.nb_places_restantes >= 1
-             ORDER BY DATEDIFF(DATE(t.date_depart), :date) ASC
-             LIMIT 3"
-        );
 
-        $altStmt->execute([
+
+    //
+    // Trajet alternatif si aucun résultat
+    //
+    if (empty($resultats)) {
+        $sqlAlt = "
+            SELECT t.*, t.duree, u.pseudo, v.energie,
+                   (
+                       SELECT ROUND(AVG(a.note), 1)
+                       FROM participations pa
+                       JOIN avis a ON a.participation_id = pa.id
+                       WHERE pa.trajet_id = t.id
+                   ) AS note_moyenne
+                   " . ($user_id ? ",
+                   EXISTS (
+                       SELECT 1 FROM participations p
+                       WHERE p.trajet_id = t.id
+                       AND p.utilisateur_id = :user_id
+                   ) AS deja_participe" : "") . "
+            FROM trajets t
+            JOIN utilisateurs u ON t.chauffeur_id = u.id
+            JOIN vehicules v ON t.vehicule_id = v.id
+            WHERE UPPER(TRIM(SUBSTRING_INDEX(t.adresse_depart, ' ', -1))) = :ville_depart
+              AND UPPER(TRIM(SUBSTRING_INDEX(t.adresse_arrivee, ' ', -1))) = :ville_arrivee
+              AND t.statut IN ('à_venir', 'en_cours')
+              AND DATE(t.date_depart) >= :date
+              AND t.nb_places_restantes >= 1
+            ORDER BY DATEDIFF(DATE(t.date_depart), :date) ASC
+            LIMIT 3
+        ";
+
+        $altStmt = $pdo->prepare($sqlAlt);
+        $altParams = [
             'ville_depart'  => $depart,
             'ville_arrivee' => $arrivee,
             'date'          => $date
-        ]);
-
+        ];
+        if ($user_id) {
+            $altParams['user_id'] = $user_id;
+        }
+        $altStmt->execute($altParams);
         $resultats = $altStmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($resultats as &$alt) {
@@ -141,6 +177,11 @@ try {
         }
     }
 
+
+
+	//
+	// Stockage des réponses
+	//
     $response['success'] = true;
     $response['resultats'] = $resultats;
 

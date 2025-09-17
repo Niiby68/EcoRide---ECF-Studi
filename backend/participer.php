@@ -28,11 +28,20 @@ $user_id = (int) $_SESSION['user_id'];
 
 
 
-// Vérification CSRF
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' 
-    || empty($_POST['csrf_token']) 
-    || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+//
+// Vérification de la méthode
+//
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405); // Method Not Allowed
+    exit('Méthode non autorisée.');
+}
 
+
+
+//
+// Vérification CSRF
+//
+if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
     if (!empty($_POST['trajet_id'])) {
         $redirect = "/frontend/detail-trajet.php?id=" . (int)$_POST['trajet_id'];
     } else {
@@ -42,9 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST'
     exit;
 }
 
-
-
-// Régénération du token par sécurité
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 

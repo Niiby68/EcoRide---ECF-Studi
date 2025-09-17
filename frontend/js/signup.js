@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', function () {
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     const formData = new FormData(form);
+	
+	if (!formData.get('csrf_token')) {
+	  console.error('CSRF token manquant dans le formulaire.');
+	  return;
+	}
 
     let originalHTML = '';
     if (validationBtn) {
@@ -53,7 +58,12 @@ document.addEventListener('DOMContentLoaded', function () {
           validationBtn.innerHTML = originalHTML || 'Valider';
         }
         messageBox.classList.add('alert-danger');
-        messageText.textContent = data.message || "L'inscription a échoué.";
+        
+		if (data.message === 'Échec de la vérification CSRF.') {
+			messageText.textContent = "Votre session a expiré, merci de recharger la page.";
+        } else {
+			messageText.textContent = data.message || "L'inscription a échoué.";
+        }
       }
     })
     .catch(error => {

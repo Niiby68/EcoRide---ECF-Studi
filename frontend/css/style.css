@@ -123,6 +123,28 @@ h1, h2, h3, h4, h5, h6 {
 	height: auto;
 }
 
+.trajet-card.participe {
+    border: 3px solid var(--color-primary) !important;
+    background: #E8F5E9 !important; /* Vert très clair */
+    box-shadow: 0 0 15px rgba(46, 125, 50, 0.6) !important;
+    position: relative;
+}
+
+.trajet-card.participe::before {
+    content: "✔ Déjà réservé";
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--color-primary);
+    color: var(--white);
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+
 
 
 /* Pied de page */
