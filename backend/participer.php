@@ -91,7 +91,7 @@ if (!$trajet) {
 
 
 
-// Empêcher le chauffeur de s’inscrire à son propre trajet
+// Empêcher le chauffeur de s'inscrire à son propre trajet
 if ((int)$trajet['chauffeur_id'] === $user_id) {
     header("Location: {$redirect}{$sep}erreur=chauffeur");
     exit;

@@ -29,7 +29,7 @@ function formulaire_trajet(string $action = 'covoiturages.php'): void {
 				<input type="text" name="depart" class="form-control" placeholder="Ville de départ (ex : Strasbourg)" aria-label="Ville de départ" value="<?= htmlspecialchars($depart, ENT_QUOTES, 'UTF-8') ?>" required>
 			</div>
 			<div class="col-md-3">
-				<input type="text" name="arrivee" class="form-control" placeholder="Ville d’arrivée (ex : Colmar)" aria-label="Ville d’arrivée" value="<?= htmlspecialchars($arrivee, ENT_QUOTES, 'UTF-8') ?>" required>
+				<input type="text" name="arrivee" class="form-control" placeholder="Ville d'arrivée (ex : Colmar)" aria-label="Ville d'arrivée" value="<?= htmlspecialchars($arrivee, ENT_QUOTES, 'UTF-8') ?>" required>
 			</div>
 			<div class="col-md-3">
 				<input type="date" name="date" class="form-control" aria-label="Date de départ" value="<?= htmlspecialchars($date, ENT_QUOTES, 'UTF-8') ?>" required>

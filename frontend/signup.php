@@ -65,7 +65,7 @@ if (empty($_SESSION['csrf_token'])) {
 	<!-- Header -->
     <?php en_tete($chemin_racine); ?>
 
-	<!-- Fil d’Ariane -->
+	<!-- Fil d'Ariane -->
 	<div class="container">
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">

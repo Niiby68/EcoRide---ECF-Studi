@@ -66,7 +66,7 @@ try {
         throw new Exception("Ville de départ invalide.");
     }
     if (!preg_match("/^[\p{L}0-9\s'\-]+$/u", $arrivee)) {
-        throw new Exception("Ville d’arrivée invalide.");
+        throw new Exception("Ville d'arrivée invalide.");
     }
 
     $dateObj = DateTime::createFromFormat('Y-m-d', $date);

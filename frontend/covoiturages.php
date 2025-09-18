@@ -132,7 +132,7 @@ require_once('includes/en-tete.php');
 		<!-- Résultats de la recherche -->
 		<div class="card">
 			<div class="card-body text-center" id="reponse-trajet">
-				<p class="text-muted">Aucun trajet n’a encore été recherché. Utilisez le formulaire ci-dessus pour lancer une recherche.</p>
+				<p class="text-muted">Aucun trajet n'a encore été recherché. Utilisez le formulaire ci-dessus pour lancer une recherche.</p>
 				<img src="img/covoiturages/voiture.png" alt="Illustration voiture en attente d'un trajet" class="img-fluid mt-3 rounded my-3">
 			</div>
 		</div>	

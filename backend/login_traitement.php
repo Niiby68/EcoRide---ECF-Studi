@@ -11,7 +11,35 @@ require_once 'models/Utilisateur.php';
 
 
 
-// Détection de l’AJAX
+//
+// Vérification de la méthode
+//
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405); // Method Not Allowed
+    exit('Méthode non autorisée.');
+}
+
+
+
+//
+// Vérification CSRF
+//
+if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+    http_response_code(403); // Forbidden
+
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
+        && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Échec de la vérification CSRF.']);
+    } else {
+        header("Location: ../frontend/login.php?error=" . urlencode("Votre session a expiré, merci de recharger la page."));
+    }
+    exit;
+}
+
+
+
+// Détection de l'AJAX
 $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
@@ -31,7 +59,7 @@ try {
 
     // Validation basique
     if (empty($email) || empty($password)) {
-        throw new Exception('Veuillez remplir tous les champs.');
+        throw new Exception('Merci de renseigner votre email et votre mot de passe.');
     }
 
     // Chargement utilisateur
@@ -39,12 +67,12 @@ try {
     $userObj->set_email($email);
     $data = $userObj->load_user_by_email($pdo);
     if (!$data) {
-        throw new Exception('Aucun utilisateur trouvé avec cet email.');
+        throw new Exception('Adresse email inconnue. Vérifiez ou créez un compte.');
     }
 
     // Vérification du mot de passe
     if (!password_verify($password, $userObj->get_hashpass())) {
-        throw new Exception('Mot de passe incorrect.');
+        throw new Exception('Mot de passe incorrect. Veuillez réessayez.');
     }
 
     // Création de la session
@@ -73,7 +101,7 @@ try {
 
         $payload = [
             'success' => true,
-            'message' => 'Connexion réussie !'
+            'message' => 'Connexion réussie ! Vous allez être redirigé...'
         ];
         if (!empty($next) && $redirect !== '/frontend/index.php') {
             $payload['redirect'] = $redirect;

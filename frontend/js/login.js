@@ -49,7 +49,11 @@ document.addEventListener('DOMContentLoaded', function () {
           validationBtn.innerHTML = originalHTML || 'Se connecter';
         }
         messageBox.classList.add('alert-danger');
-        messageTxt.textContent = data.message || 'Identifiants invalides.';
+        if (data.message === 'Échec de la vérification CSRF.') {
+		  messageTxt.textContent = "Votre session a expiré, merci de recharger la page.";
+		} else {
+		  messageTxt.textContent = data.message || 'Identifiants invalides.';
+		}
       }
     })
     .catch(err => {

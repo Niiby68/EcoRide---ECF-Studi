@@ -19,7 +19,7 @@ CREATE TABLE utilisateurs (
     role ENUM('passager', 'chauffeur', 'les_deux') DEFAULT 'passager',
     date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
     actif BOOLEAN DEFAULT TRUE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table des véhicules
 CREATE TABLE vehicules (
@@ -36,7 +36,7 @@ CREATE TABLE vehicules (
     animaux BOOLEAN DEFAULT FALSE,
     preferences TEXT,
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table des trajets
 CREATE TABLE trajets (
@@ -53,7 +53,7 @@ CREATE TABLE trajets (
     statut ENUM('à_venir', 'en_cours', 'termine', 'annulé') DEFAULT 'à_venir',
     FOREIGN KEY (chauffeur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicule_id) REFERENCES vehicules(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table des participations (réservations)
 CREATE TABLE participations (
@@ -67,7 +67,7 @@ CREATE TABLE participations (
     UNIQUE (utilisateur_id, trajet_id),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
     FOREIGN KEY (trajet_id) REFERENCES trajets(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table des avis laissés par les passagers
 CREATE TABLE avis (
@@ -77,7 +77,7 @@ CREATE TABLE avis (
     commentaire TEXT,
     valide BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (participation_id) REFERENCES participations(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table des employés pour la modération
 CREATE TABLE employes (
@@ -87,4 +87,4 @@ CREATE TABLE employes (
     mot_de_passe VARCHAR(255) NOT NULL,
     date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
     actif BOOLEAN DEFAULT TRUE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

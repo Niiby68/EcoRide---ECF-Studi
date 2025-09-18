@@ -51,7 +51,7 @@ require_once('includes/en-tete.php');
 	<!-- Header -->
     <?php en_tete($chemin_racine, $is_connected); ?>
 
-	<!-- Fil d’Ariane -->
+	<!-- Fil d'Ariane -->
 	<div class="container">
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">
@@ -74,15 +74,15 @@ require_once('includes/en-tete.php');
 			[Nom du responsable]</p>
 
 			<p><strong>Hébergement :</strong><br>
-			[Nom de l’hébergeur]<br>
-			[Adresse de l’hébergeur]<br>
+			[Nom de l'hébergeur]<br>
+			[Adresse de l'hébergeur]<br>
 			Téléphone : [à compléter]</p>
 
 			<p><strong>Propriété intellectuelle :</strong><br>
-			Tous les contenus présents sur ce site sont la propriété d’EcoRide, sauf mention contraire. Toute reproduction, représentation ou diffusion, même partielle, est interdite sans autorisation écrite préalable.</p>
+			Tous les contenus présents sur ce site sont la propriété d'EcoRide, sauf mention contraire. Toute reproduction, représentation ou diffusion, même partielle, est interdite sans autorisation écrite préalable.</p>
 
 			<p><strong>Protection des données personnelles :</strong><br>
-			Aucune donnée personnelle n’est collectée sans votre consentement. Vous pouvez demander la suppression de vos données à tout moment par e-mail à <a href="mailto:contact@ecoride.com">contact@ecoride.com</a>.</p>
+			Aucune donnée personnelle n'est collectée sans votre consentement. Vous pouvez demander la suppression de vos données à tout moment par e-mail à <a href="mailto:contact@ecoride.com">contact@ecoride.com</a>.</p>
 		</div>
 	</main>
 	

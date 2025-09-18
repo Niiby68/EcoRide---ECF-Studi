@@ -30,12 +30,10 @@ if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) || !hash_equals($_SESS
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => 'Échec de la vérification CSRF.']);
     } else {
-        header("Location: ../frontend/signup.php?error=" . urlencode("Échec de la vérification CSRF."));
+        header("Location: ../frontend/signup.php?error=" . urlencode("Votre session a expiré, merci de recharger la page."));
     }
     exit;
 }
-
-$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 
 
@@ -65,19 +63,19 @@ try {
     $user = new Utilisateur();
 
     if (!$user->set_pseudo($pseudo) || !$user->set_email($email) || !$user->set_password($password) || !$user->set_role($role)) {
-        throw new Exception('Données invalides.');
+        throw new Exception('Certains champs ne sont pas valides. Vérifiez vos informations.');
     }
 
     if ($user->is_user_exist($pdo)) {
-        throw new Exception('Cet email est déjà enregistré.');
+        throw new Exception('Cette adresse email est déjà utilisée.');
     }
 
     if ($user->is_pseudo_exist($pdo)) {
-        throw new Exception('Ce pseudo est déjà utilisé.');
+        throw new Exception('Ce pseudo n\'est pas disponible.');
     }
 
     if (!$user->add_user($pdo)) {
-        throw new Exception('Erreur lors de l’enregistrement.');
+        throw new Exception('Un problème est survenu lors de l\'inscription. Veuillez réessayer.');
     }
 
 	$redirect = '../frontend/login.php';

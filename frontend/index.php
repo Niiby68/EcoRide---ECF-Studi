@@ -66,7 +66,7 @@ require_once('includes/en-tete.php');
                 <div class="text-content pe-lg-4">
                     <h2 class="mb-3">Le covoiturage écolo 🌿</h2>
                     <p>
-                        EcoRide est une plateforme de covoiturage pensée pour faciliter les déplacements tout en réduisant notre impact sur l’environnement.
+                        EcoRide est une plateforme de covoiturage pensée pour faciliter les déplacements tout en réduisant notre impact sur l'environnement.
                         En mettant en relation des conducteurs et des passagers, nous encourageons une mobilité plus douce, plus responsable et plus économique.
                     </p>
                     <p>
@@ -80,7 +80,7 @@ require_once('includes/en-tete.php');
 						class="img-fluid rounded my-3 d-lg-none mx-auto">
 					
                     <p>
-                        Ce projet a été conçu dans une logique de développement durable, en mettant l’humain et la planète au cœur de nos préoccupations.
+                        Ce projet a été conçu dans une logique de développement durable, en mettant l'humain et la planète au cœur de nos préoccupations.
                         Grâce à une interface intuitive et responsive, vous pouvez facilement proposer un trajet ou en rechercher un, où que vous soyez.
                     </p>
                     <p class="mb-0">
