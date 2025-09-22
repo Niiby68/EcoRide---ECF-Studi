@@ -59,6 +59,12 @@ try {
     $password = $_POST['mot_de_passe'] ?? '';
     $role = $_POST['role'] ?? '';
 	$next = $_POST['next'] ?? '';
+	
+	// Vérification du captcha
+	if (!isset($_POST['captcha']) || $_POST['captcha'] != ($_SESSION['captcha_result'] ?? null)) {
+		throw new Exception("Vérification anti-robot échouée.");
+	}
+	unset($_SESSION['captcha_result']);
 
     $user = new Utilisateur();
 

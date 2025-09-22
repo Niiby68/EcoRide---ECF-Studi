@@ -107,7 +107,7 @@ if (empty($_SESSION['csrf_token'])) {
 						<label for="mot_de_passe" class="form-label">Mot de passe</label>
 						<input type="password" class="form-control" id="mot_de_passe" name="mot_de_passe" required>
 					</div>
-					<button id="validation" type="submit" class="btn btn-primary pb-2">Se connecter</button>
+					<button id="validation" type="submit" class="btn btn-primary">Se connecter</button>
 				</form>
 			</div>
 		</div>		

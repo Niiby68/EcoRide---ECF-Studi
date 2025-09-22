@@ -8,27 +8,31 @@
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('form-inscription');
   const messageBox = document.getElementById('form-message');
-  const messageText = document.getElementById('form-message-text');
+  const messageTxt = document.getElementById('form-message-text');
   const validationBtn = document.getElementById('validation');
+  const captchaLabel = document.getElementById('captcha-label'); 
 
   if (!form) return;
 
-  const nextField = form.querySelector('input[name="next"]');
-  
-  if (nextField && !nextField.value) {
-    const params = new URLSearchParams(location.search);
-    nextField.value = params.get('next') || '';
+  // Fonction pour régénérer le captcha via AJAX
+  function refreshCaptcha() {
+    fetch('/backend/captcha.php')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && captchaLabel) {
+          captchaLabel.textContent = data.question;
+        }
+      })
+      .catch(err => {
+        console.error("Erreur lors de la régénération du captcha :", err);
+      });
   }
 
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', e => {
     e.preventDefault();
     const formData = new FormData(form);
-	
-	if (!formData.get('csrf_token')) {
-	  console.error('CSRF token manquant dans le formulaire.');
-	  return;
-	}
 
+    // Désactiver dès l’envoi + spinner
     let originalHTML = '';
     if (validationBtn) {
       validationBtn.disabled = true;
@@ -39,42 +43,52 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('/backend/signup_traitement.php', {
       method: 'POST',
-      headers: {'X-Requested-With': 'XMLHttpRequest'},
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
       body: formData
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-      messageBox.classList.remove('d-none','alert-success','alert-danger');
+      messageBox.classList.remove('d-none', 'alert-success', 'alert-danger');
 
       if (data.success) {
         messageBox.classList.add('alert-success');
-        messageText.textContent = data.message;
+        messageTxt.textContent = data.message;
 
-        const target = data.redirect || 'index.php';
+        // Redirection
+        const target = data.redirect || 'login.php';
         setTimeout(() => { window.location.href = target; }, 1500);
       } else {
+        // Échec → réactiver + restaurer le bouton
         if (validationBtn) {
           validationBtn.disabled = false;
-          validationBtn.innerHTML = originalHTML || 'Valider';
+          validationBtn.innerHTML = originalHTML || "S'inscrire";
         }
         messageBox.classList.add('alert-danger');
-        
-		if (data.message === 'Échec de la vérification CSRF.') {
-			messageText.textContent = "Votre session a expiré, merci de recharger la page.";
-        } else {
-			messageText.textContent = data.message || "L'inscription a échoué.";
+
+        // Cas particulier captcha
+        if (data.message && data.message.includes("anti-robot")) {
+          messageTxt.textContent = "Vérification anti-robot échouée. Nouveau captcha généré.";
+          refreshCaptcha(); // 👈 régénère la question
+        } 
+        // Cas particulier CSRF
+        else if (data.message === "Échec de la vérification CSRF.") {
+          messageTxt.textContent = "Votre session a expiré, merci de recharger la page.";
+        }
+        // Autres erreurs (email déjà utilisé, pseudo indisponible, etc.)
+        else {
+          messageTxt.textContent = data.message || "Une erreur est survenue.";
         }
       }
     })
-    .catch(error => {
-      console.error('Erreur AJAX :', error);
+    .catch(err => {
+      console.error('Erreur AJAX :', err);
       if (validationBtn) {
         validationBtn.disabled = false;
-        validationBtn.innerHTML = originalHTML || 'Valider';
+        validationBtn.innerHTML = originalHTML || "S'inscrire";
       }
-      messageBox.classList.remove('d-none','alert-success');
+      messageBox.classList.remove('d-none', 'alert-success');
       messageBox.classList.add('alert-danger');
-      messageText.textContent = 'Une erreur technique est survenue.';
+      messageTxt.textContent = "Une erreur technique est survenue. Veuillez réessayer.";
     });
   });
 });

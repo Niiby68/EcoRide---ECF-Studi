@@ -1,13 +1,14 @@
 <?php
 //
-//	Page de connexion ( Traitement )
-//	Chemin : /backend/login_traitement.php
+//  Page de connexion ( Traitement )
+//  Chemin : /backend/login_traitement.php
 //
 
 
 
 session_start();
 require_once 'models/Utilisateur.php';
+require_once 'login_attempts.php'; // gestion des tentatives par IP
 
 
 
@@ -39,12 +40,18 @@ if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST[
 
 
 
+//
 // Détection de l'AJAX
+//
 $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
+
+
+//
+// Connexion
+//
 try {
-    // Connexion PDO en mode exception
     $pdo = new PDO(
         'mysql:host=localhost;dbname=ecoride;charset=utf8',
         'root',
@@ -52,35 +59,69 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 
+    // Vérification du statut de l'IP
+    $client_ip = get_client_ip();
+    $block = is_ip_blocked($pdo, $client_ip);
+	if ($block['blocked']) {
+		$minutes = ceil($block['remaining_seconds'] / 60);
+		if ($is_ajax) {
+			header('Content-Type: application/json');
+			echo json_encode([
+				'success' => false,
+				'message' => "Trop de tentatives. Réessayez dans $minutes minute(s).",
+				'remaining_seconds' => $block['remaining_seconds'] // 👈 ajouté
+			]);
+		} else {
+			$msg = urlencode("Trop de tentatives. Réessayez dans $minutes minute(s).");
+			header("Location: ../frontend/login.php?error=$msg");
+		}
+		exit;
+	}
+
     // Récupération des données du formulaire
     $email = $_POST['email'] ?? '';
     $password = $_POST['mot_de_passe'] ?? '';
-	$next = $_POST['next'] ?? '';
+    $next = $_POST['next'] ?? '';
 
-    // Validation basique
-    if (empty($email) || empty($password)) {
-        throw new Exception('Merci de renseigner votre email et votre mot de passe.');
-    }
+	// Validation basique
+	if (empty($email) || empty($password)) {
+		record_failed_attempt($pdo, $client_ip);   // << ici
+		throw new Exception('Merci de renseigner votre email et votre mot de passe.');
+	}
 
-    // Chargement utilisateur
-    $userObj = new Utilisateur();
-    $userObj->set_email($email);
-    $data = $userObj->load_user_by_email($pdo);
-    if (!$data) {
-        throw new Exception('Adresse email inconnue. Vérifiez ou créez un compte.');
-    }
+	// Vérif email valide
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		record_failed_attempt($pdo, $client_ip);   // << ici
+		throw new Exception('Adresse email invalide. Utilisez une adresse correcte.');
+	}
 
-    // Vérification du mot de passe
-    if (!password_verify($password, $userObj->get_hashpass())) {
-        throw new Exception('Mot de passe incorrect. Veuillez réessayez.');
-    }
+	// Chargement utilisateur
+	$userObj = new Utilisateur();
+	$userObj->set_email($email);
+	$data = $userObj->load_user_by_email($pdo);
+	if (!$data) {
+		record_failed_attempt($pdo, $client_ip);   // << ici
+		throw new Exception('Adresse email inconnue. Vérifiez ou créez un compte.');
+	}
+
+	// Vérification du mot de passe
+	if (!password_verify($password, $userObj->get_hashpass())) {
+		record_failed_attempt($pdo, $client_ip);   // << ici
+		throw new Exception('Mot de passe incorrect. Veuillez réessayer.');
+	}
+
+    // Connexion réussie → reset des tentatives
+    reset_attempts($pdo, $client_ip);
+
+    // Sécurité session
+    session_regenerate_id(true);
 
     // Création de la session
     $_SESSION['user_id'] = $data['id'];
     $_SESSION['pseudo']  = $data['pseudo'];
     $_SESSION['role']    = $data['role'];
-	
-	// Calcul de la redirection sécurisée
+
+    // Calcul de la redirection sécurisée
     $redirect = '/frontend/index.php'; // valeur par défaut
     if (!empty($next)) {
         $parts  = parse_url($next);
@@ -89,16 +130,13 @@ try {
         $host   = $parts['host']  ?? '';
         $scheme = $parts['scheme']?? '';
 
-        // Autoriser uniquement une URL interne relative commençant par '/'
         if ($scheme === '' && $host === '' && str_starts_with($path, '/')) {
             $redirect = $path.$query;
         }
     }
 
     if ($is_ajax) {
-        // Réponse JSON pour AJAX
         header('Content-Type: application/json');
-
         $payload = [
             'success' => true,
             'message' => 'Connexion réussie ! Vous allez être redirigé...'
@@ -106,11 +144,9 @@ try {
         if (!empty($next) && $redirect !== '/frontend/index.php') {
             $payload['redirect'] = $redirect;
         }
-
         echo json_encode($payload);
         exit;
     } else {
-        // Redirection classique
         header('Location: '.$redirect);
         exit;
     }

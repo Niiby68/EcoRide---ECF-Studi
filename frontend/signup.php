@@ -108,7 +108,20 @@ if (empty($_SESSION['csrf_token'])) {
 							<option value="les_deux">Les deux</option>
 						</select>
 					</div>
-					<button id="validation" type="submit" class="btn btn-primary pb-2">S'inscrire</button>
+					<?php
+					// Génération du captcha de base
+					$nb1 = rand(1, 9);
+					$nb2 = rand(1, 9);
+					$_SESSION['captcha_result'] = $nb1 + $nb2;
+					?>
+
+					<div class="mb-3">
+					  <label for="captcha" class="form-label" id="captcha-label">
+						Combien font <?php echo $nb1; ?> + <?php echo $nb2; ?> ?
+					  </label>
+					  <input type="number" class="form-control" id="captcha" name="captcha" required>
+					</div>
+					<button id="validation" type="submit" class="btn btn-primary">S'inscrire</button>
 				</form>
 			</div>
 		</div>
