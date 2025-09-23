@@ -64,15 +64,6 @@ if (empty($_SESSION['csrf_token'])) {
 	<!-- Message d'activation du Javascript -->
     <?php javamess(); ?>
 	
-	<!-- Connexion réussie -->
-	<?php 
-	if (isset($_GET['success'])) {
-		echo '<div class="alert alert-success text-center m-3">';
-		echo 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
-		echo '</div>';
-	}
-	?>
-	
 	<!-- Header -->
     <?php en_tete($chemin_racine); ?>
 
@@ -89,8 +80,21 @@ if (empty($_SESSION['csrf_token'])) {
 	<main class="container">
 		<h1 class="mb-4">Connexion</h1>
 
-		<div id="form-message" class="alert d-none alert-dismissible fade show" role="alert">
-			<span id="form-message-text"></span>
+		<?php
+		// Gestion des messages sans JS
+		$successMsg = $_GET['success'] ?? '';
+		$errorMsg   = $_GET['error']   ?? '';
+		$hasSuccess = !empty($successMsg);
+		$hasError   = !empty($errorMsg);
+		?>
+		
+		<div id="form-message" 
+			 class="alert alert-dismissible fade show <?= $hasSuccess ? 'alert-success' : ($hasError ? 'alert-danger' : 'd-none') ?>" 
+			 role="alert">
+			<span id="form-message-text">
+				<?= $hasSuccess ? htmlspecialchars($successMsg, ENT_QUOTES, 'UTF-8') : '' ?>
+				<?= $hasError   ? htmlspecialchars($errorMsg,   ENT_QUOTES, 'UTF-8') : '' ?>
+			</span>
 			<button type="button" class="btn-close pb-2" data-bs-dismiss="alert" aria-label="Fermer"></button>
 		</div>
 		

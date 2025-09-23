@@ -20,3 +20,4 @@ echo json_encode([
     'success' => true,
     'question' => "Combien font $nb1 + $nb2 ?"
 ]);
+?>

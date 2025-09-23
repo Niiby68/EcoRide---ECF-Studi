@@ -6,8 +6,6 @@
 
 
 
-header('Content-Type: application/json');
-
 require_once '../config/db.php';
 session_start();
 
@@ -23,29 +21,17 @@ $user_id = $_SESSION['user_id'] ?? null;
 
 
 //
-//  Réponse si le Javascript est désactivé ( variable GET reçus )
+// Détection de l'AJAX
+//
+$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+
+
+//
+// Si ce n'est pas une requête POST → on considère que c'est sans JS (GET)
 //
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Content-Type: text/html; charset=UTF-8');
-    ?>
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <title>Erreur de la page</title>
-    </head>
-    <body>
-        <h1>Une erreur a été detectée</h1>
-        <p>
-            Il se peut que Javascript soit désactivé<br>
-            Cette page nécessite que le JavaScript soit activé pour fonctionner correctement.<br>
-            Veuillez activer JavaScript dans les paramètres de votre navigateur, puis réessayez.<br>
-            <a href="../frontend/covoiturages.php">Retour à la page précédente</a>
-        </p>
-    </body>
-    </html>
-    <?php
-    exit;
+    $is_ajax = false;
 }
 
 
@@ -54,9 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 //  Réponse si le Javascript est activé ( variables POST reçus )
 //
 try {
-    $depart  = strtoupper(trim($_POST['depart'] ?? ''));
-    $arrivee = strtoupper(trim($_POST['arrivee'] ?? ''));
-    $date    = trim($_POST['date'] ?? '');
+	$depart  = strtoupper(trim($_POST['depart'] ?? $_GET['depart'] ?? ''));
+	$arrivee = strtoupper(trim($_POST['arrivee'] ?? $_GET['arrivee'] ?? ''));
+	$date    = trim($_POST['date'] ?? $_GET['date'] ?? '');
 
     if ($depart === '' || $arrivee === '' || $date === '') {
         throw new Exception("Tous les champs sont requis.");
@@ -189,5 +175,57 @@ try {
     $response['message'] = $e->getMessage();
 }
 
-echo json_encode($response);
+
+
+//
+// Sortie
+//
+if ($is_ajax) {
+    // Réponse pour AJAX (JS activé)
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode($response);
+    exit;
+} else {
+    // Réponse pour HTML direct (JS désactivé)
+    header('Content-Type: text/html; charset=UTF-8');
+
+    if (!$response['success']) {
+        echo "<div class='alert alert-danger text-center'>"
+           . htmlspecialchars($response['message'], ENT_QUOTES, 'UTF-8')
+           . "</div>";
+    } elseif (empty($response['resultats'])) {
+        echo "<div class='alert alert-warning text-center'>Aucun trajet trouvé pour votre recherche.</div>";
+    } else {
+        foreach ($response['resultats'] as $trajet) {
+            ?>
+			<div class="trajet-card card mb-3 <?= !empty($trajet['deja_participe']) ? 'participe' : '' ?>">
+				<div class="card-body">
+					<h5 class="card-title">
+						Chauffeur : <?= htmlspecialchars($trajet['pseudo']) ?>
+						<?php if (!empty($trajet['note_moyenne'])): ?>
+							<span class="badge bg-success ms-2">
+								⭐ <?= $trajet['note_moyenne'] ?>/5
+							</span>
+						<?php endif; ?>
+						<?php if (!empty($trajet['deja_participe'])): ?>
+							<span class="badge bg-info ms-2">Déjà inscrit ✅</span>
+						<?php endif; ?>
+					</h5>
+                    <p class="card-text mb-1">
+                        <strong>Départ :</strong> <?= htmlspecialchars($trajet['adresse_depart']) ?><br>
+                        <strong>Arrivée :</strong> <?= htmlspecialchars($trajet['adresse_arrivee']) ?><br>
+                        <strong>Date :</strong> <?= (new DateTime($trajet['date_depart']))->format('d/m/Y H:i') ?><br>
+                        <strong>Durée :</strong> <?= htmlspecialchars($trajet['duree'] ?? 'N/A') ?><br>
+                        <strong>Énergie :</strong> <?= htmlspecialchars($trajet['energie']) ?>
+                        <?php if ($trajet['energie'] === 'électrique'): ?> 🌿<?php endif; ?>
+                    </p>
+                    <?php if (!empty($trajet['alternative'])): ?>
+                        <p class="text-muted"><em>Proposition alternative</em></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php
+        }
+    }
+}
 ?>

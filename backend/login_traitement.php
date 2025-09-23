@@ -43,8 +43,7 @@ if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST[
 //
 // Détection de l'AJAX
 //
-$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
-    && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
 
 

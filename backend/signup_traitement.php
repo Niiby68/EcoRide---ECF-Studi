@@ -106,10 +106,15 @@ try {
         exit;
     }
 
-    // Réponse classique (sans AJAX)
-    header('Location: '.$redirect);
-    exit;
-
+	// Réponse classique (sans AJAX)
+	if ($redirect === '../frontend/login.php') {
+		// Succès standard : on redirige avec un message
+		header('Location: '.$redirect.'?success=' . urlencode("Inscription réussie ! Vous pouvez maintenant vous connecter."));
+	} else {
+		// Cas d’un redirect spécifique via "next"
+		header('Location: '.$redirect);
+	}
+	exit;
 } catch (Exception $e) {
     if ($is_ajax) {
         $response['message'] = $e->getMessage();

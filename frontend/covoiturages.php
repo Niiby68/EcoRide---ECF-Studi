@@ -46,6 +46,13 @@ require_once('includes/en-tete.php');
 
 	<!-- JS pour AJAX -->
 	<script src="js/recherche-covoiturages.js" defer></script>
+	
+	<!-- Fallback CSS si JS désactivé -->
+    <noscript>
+		<style>
+			#bloc-filtres { display: block !important; }
+		</style>
+	</noscript>
 </head>
 
 <body>
@@ -69,7 +76,7 @@ require_once('includes/en-tete.php');
         <h1 class="mb-4">Trouvez un trajet en covoiturage</h1>
 		
 		<!-- Barre de recherche -->
-		<?php formulaire_trajet( $chemin_racine.'backend/recherche-covoiturages.php' ); ?>
+		<?php formulaire_trajet($chemin_racine.'frontend/covoiturage.php'); ?>
 		
 		<div id="form-message" class="alert d-none alert-dismissible fade show" role="alert">
 			<span id="form-message-text"></span>
@@ -78,12 +85,13 @@ require_once('includes/en-tete.php');
 		
 		<!-- Filtres dynamiques -->
 		<?php
-			$prix = $_GET['prix'] ?? '';
-			$note = $_GET['note'] ?? '';
-			$duree_h = $_GET['duree_h'] ?? '';
-			$duree_m = $_GET['duree_m'] ?? '';
-			$ecolo = (isset($_GET['ecolo']) && $_GET['ecolo'] === '1') ? 'checked' : '';
+		$prix = $_GET['prix'] ?? '';
+		$note = $_GET['note'] ?? '';
+		$duree_h = $_GET['duree_h'] ?? '';
+		$duree_m = $_GET['duree_m'] ?? '';
+		$ecolo = (isset($_GET['ecolo']) && $_GET['ecolo'] === '1') ? 'checked' : '';
 		?>
+		
 		<div class="filters card p-3 mb-4 d-none" id="bloc-filtres">
 			<div class="row g-2 align-items-end">
 				<div class="col-md-4">
@@ -132,8 +140,15 @@ require_once('includes/en-tete.php');
 		<!-- Résultats de la recherche -->
 		<div class="card">
 			<div class="card-body text-center" id="reponse-trajet">
-				<p class="text-muted">Aucun trajet n'a encore été recherché. Utilisez le formulaire ci-dessus pour lancer une recherche.</p>
-				<img src="img/covoiturages/voiture.png" alt="Illustration voiture en attente d'un trajet" class="img-fluid mt-3 rounded my-3">
+				<?php if (!empty($_GET['depart']) && !empty($_GET['arrivee']) && !empty($_GET['date'])): ?>
+					<?php
+					// Inclusion directe du traitement si JS désactivé
+					include($chemin_racine.'backend/recherche-covoiturages.php');
+					?>
+				<?php else: ?>
+					<p class="text-muted">Aucun trajet n'a encore été recherché. Utilisez le formulaire ci-dessus pour lancer une recherche.</p>
+					<img src="img/covoiturages/voiture.png" alt="Illustration voiture en attente d'un trajet" class="img-fluid mt-3 rounded my-3">
+				<?php endif; ?>
 			</div>
 		</div>	
     </main>

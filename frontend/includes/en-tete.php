@@ -21,6 +21,13 @@ function en_tete(string $chemin_racine, bool $is_connected = false): void {
         <div class="container cont-menu">
             <nav class="navbar header-menu navbar-expand-md navbar-light">
 			
+			    <!-- Fallback CSS si JS est désactivé -->
+                <noscript>
+                    <style>
+                        .collapse.navbar-collapse { display: block !important; visibility: visible !important; }
+                    </style>
+                </noscript>
+			
 				<!-- Groupe gauche : logo -->
                 <div class="nav-left d-none d-lg-flex">
                     <ul class="nav mb-0">

@@ -78,8 +78,16 @@ if (empty($_SESSION['csrf_token'])) {
 	<main class="container">
 		<h1 class="mb-4">Inscription</h1>
 		
-		<div id="form-message" class="alert d-none alert-dismissible fade show" role="alert">
-			<span id="form-message-text"></span>
+		<?php
+		// Gestion du message si retour sans JS
+		$errorMsg = $_GET['error'] ?? '';
+		$hasError = !empty($errorMsg);
+		?>
+		
+		<div id="form-message" 
+			 class="alert alert-dismissible fade show <?= $hasError ? 'alert-danger' : 'd-none' ?>" 
+			 role="alert">
+			<span id="form-message-text"><?= $hasError ? htmlspecialchars($errorMsg, ENT_QUOTES, 'UTF-8') : '' ?></span>
 			<button type="button" class="btn-close pb-2" data-bs-dismiss="alert" aria-label="Fermer"></button>
 		</div>
 		
