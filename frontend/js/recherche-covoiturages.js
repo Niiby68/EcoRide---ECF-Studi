@@ -37,14 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return selectedDate >= today;
     };
 	
-	// Conversion de la durée du format TIME en heures et minutes
-	function formatDuree(dureeStr) {
-		const [heures, minutes] = dureeStr.split(':').map(Number);
-		const h = heures ? `${heures}h` : '';
-		const m = minutes ? `${minutes}mn` : '';
-		return `${h}${h && m ? ' ' : ''}${m}` || '0mn';
-	}
-	
 	// Conversion de la durée TIME en minutes totales
 	// - Retourne un entier en minutes si le format est correct
 	// - Retourne Infinity si la durée est absente/invalide
@@ -89,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			card.style.borderRadius = '0.5rem';
 			card.innerHTML = `
 				<h3>
-					Trajet du ${escapeHTML(formattedDateTime)} → ${escapeHTML(formatDuree(trajet.duree))}
+					Trajet du ${escapeHTML(formattedDateTime)} → ${escapeHTML(trajet.duree_formatee)}
 					${trajet.deja_participe == 1 ? '<span class="badge bg-success ms-2">Déjà inscrit</span>' : ''}
 				</h3>
 				<p><strong>Départ :</strong> ${escapeHTML(trajet.adresse_depart)}</p>

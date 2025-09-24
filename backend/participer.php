@@ -7,6 +7,12 @@
 
 
 session_start();
+
+
+
+//
+//  Fichiers additionnels
+//
 require_once('../config/db.php');
 
 
@@ -18,7 +24,7 @@ if (!isset($_SESSION['user_id'])) {
     if (!preg_match('#^/frontend/#', $redirect)) {
         $redirect = '/frontend/covoiturages.php';
     }
-    $sep = (strpos($redirect, '?') !== false) ? '&' : '?';
+    $sep = str_contains($redirect, '?') ? '&' : '?';
 
     header("Location: {$redirect}{$sep}erreur=nonco");
     exit;
@@ -56,12 +62,12 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 
 // Reconstruction propre du redirect
-$rawNext  = $_POST['next'] ?? '/frontend/covoiturages.php';
-$redirect = rawurldecode($rawNext);
+$next_param = $_POST['next'] ?? '/frontend/covoiturages.php';
+$redirect = rawurldecode($next_param);
 if (!preg_match('#^/frontend/#', $redirect)) {
     $redirect = '/frontend/covoiturages.php';
 }
-$sep = (strpos($redirect, '?') !== false) ? '&' : '?';
+$sep = (str_contains($redirect, '?')) ? '&' : '?';
 
 
 

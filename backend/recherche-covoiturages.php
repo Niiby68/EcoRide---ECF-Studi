@@ -6,10 +6,15 @@
 
 
 
-require_once '../config/db.php';
 session_start();
 
-$response = ['success' => false, 'message' => '', 'resultats' => []];
+
+
+//
+//  Fichiers additionnels
+//
+require_once '../config/db.php';
+require_once '../frontend/includes/modif-duree.php';
 
 
 
@@ -39,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 //
 //  Réponse si le Javascript est activé ( variables POST reçus )
 //
+$response = ['success' => false, 'message' => '', 'resultats' => []];
+
 try {
 	$depart  = strtoupper(trim($_POST['depart'] ?? $_GET['depart'] ?? ''));
 	$arrivee = strtoupper(trim($_POST['arrivee'] ?? $_GET['arrivee'] ?? ''));
@@ -155,11 +162,13 @@ try {
         foreach ($resultats as &$alt) {
             $alt['voyage_ecologique'] = ($alt['energie'] === 'électrique');
             $alt['alternative'] = true;
+			$alt['duree_formatee'] = formatDuree($alt['duree']);
         }
     } else {
         foreach ($resultats as &$trajet) {
             $trajet['voyage_ecologique'] = ($trajet['energie'] === 'électrique');
             $trajet['alternative'] = false;
+			$trajet['duree_formatee'] = formatDuree($trajet['duree']);
         }
     }
 
@@ -215,7 +224,7 @@ if ($is_ajax) {
                         <strong>Départ :</strong> <?= htmlspecialchars($trajet['adresse_depart']) ?><br>
                         <strong>Arrivée :</strong> <?= htmlspecialchars($trajet['adresse_arrivee']) ?><br>
                         <strong>Date :</strong> <?= (new DateTime($trajet['date_depart']))->format('d/m/Y H:i') ?><br>
-                        <strong>Durée :</strong> <?= htmlspecialchars($trajet['duree'] ?? 'N/A') ?><br>
+                        <strong>Durée :</strong> <?= htmlspecialchars($trajet['duree_formatee'], ENT_QUOTES, 'UTF-8') ?><br>
                         <strong>Énergie :</strong> <?= htmlspecialchars($trajet['energie']) ?>
                         <?php if ($trajet['energie'] === 'électrique'): ?> 🌿<?php endif; ?>
                     </p>

@@ -18,6 +18,7 @@ $is_connected = isset($_SESSION['user_id']);
 require_once('../config/db.php');
 require_once('includes/en-tete.php');
 require_once('includes/pied-de-page.php');
+require_once('includes/modif-duree.php');
 require_once('includes/javamess.php');
 
 
@@ -94,7 +95,8 @@ $avis_list = $avis_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 // Construction de l'URL actuelle pour redirection après login/signup
-$current_url = urlencode($_SERVER['REQUEST_URI']);
+$current_url = $_SERVER['REQUEST_URI'];         // URL brute
+$next_param  = rawurlencode($current_url);      // Encodage pour ?next=
 
 
 
@@ -248,7 +250,7 @@ if (empty($_SESSION['csrf_token'])) {
                         <p><strong>Départ :</strong> <?= htmlspecialchars($trajet['adresse_depart'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
                         <p><strong>Arrivée :</strong> <?= htmlspecialchars($trajet['adresse_arrivee'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
                         <p><strong>Date :</strong> <?= (new DateTime($trajet['date_depart']))->format('d/m/Y H:i') ?></p>
-                        <p><strong>Durée :</strong> <?= htmlspecialchars($trajet['duree'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                        <p><strong>Durée :</strong> <?= htmlspecialchars(formatDuree($trajet['duree']), ENT_QUOTES, 'UTF-8') ?></p>
                         <p><strong>Prix :</strong> <?= htmlspecialchars((string)$trajet['prix'], ENT_QUOTES, 'UTF-8') ?> crédits</p>
                         <p><strong>Places restantes :</strong> 
                             <?= htmlspecialchars((string)$trajet['nb_places_restantes'], ENT_QUOTES, 'UTF-8') ?> / 
@@ -300,8 +302,8 @@ if (empty($_SESSION['csrf_token'])) {
         <div class="text-center">
             <a href="covoiturages.php?<?= htmlspecialchars($backQuery, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-primary">← Retour aux résultats</a>
             <?php if (!$is_connected): ?>
-                <a href="login.php?next=<?= $current_url ?>" class="btn btn-warning">Se connecter</a>
-                <a href="signup.php?next=<?= $current_url ?>" class="btn btn-warning">Créer un compte</a>
+				<a href="login.php?next=<?= $next_param ?>" class="btn btn-warning">Se connecter</a>
+				<a href="signup.php?next=<?= $next_param ?>" class="btn btn-warning">Créer un compte</a>
             <?php else: ?>
                 <?php if ((int)$trajet['nb_places_restantes'] <= 0): ?>
                     <button class="btn btn-primary" disabled>Plus aucune place disponible</button>

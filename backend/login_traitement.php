@@ -7,6 +7,12 @@
 
 
 session_start();
+
+
+
+//
+//  Fichiers additionnels
+//
 require_once 'models/Utilisateur.php';
 require_once 'login_attempts.php'; // gestion des tentatives par IP
 
