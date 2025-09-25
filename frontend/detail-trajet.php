@@ -319,7 +319,7 @@ if (empty($_SESSION['csrf_token'])) {
 						<input type="hidden" name="trajet_id" value="<?= htmlspecialchars((string)$trajet['id'], ENT_QUOTES, 'UTF-8') ?>">
 						<input type="hidden" name="next" value="<?= $current_url ?>">
 						<input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
-						<button type="button" id="btn-participer" class="btn btn-primary">
+						<button type="submit" id="btn-participer" class="btn btn-primary">
 							Participer à ce trajet
 						</button>
 					</form>
