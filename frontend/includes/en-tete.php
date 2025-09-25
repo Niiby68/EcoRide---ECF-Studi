@@ -83,14 +83,16 @@ function en_tete(string $chemin_racine, bool $is_connected = false): void {
                             <?php if (!$is_connected): ?>
                             <a href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>frontend/login.php" class="btn btn-primary codeco">Connexion</a>
                             <?php else: ?>
+                            <a href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>frontend/espace-client.php" class="btn btn-primary codeco">Mon Compte</a>
+                            <?php endif; ?>
+                        </li>
+                        <li class="nav-item">
+							<?php if (!$is_connected): ?>
+                            <a href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>frontend/signup.php" class="btn btn-primary codeco">Inscription</a>
+                            <?php else: ?>
                             <a href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>backend/logout.php" class="btn btn-primary codeco">Déconnexion</a>
                             <?php endif; ?>
                         </li>
-						<?php if (!$is_connected): ?>
-                        <li class="nav-item">
-                            <a href="<?= htmlspecialchars($chemin_racine, ENT_QUOTES, 'UTF-8') ?>frontend/signup.php" class="btn btn-primary codeco">Inscription</a>
-                        </li>
-						<?php endif; ?>
                     </ul>
                 </div>
             </nav>

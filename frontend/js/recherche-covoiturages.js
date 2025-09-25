@@ -82,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			card.innerHTML = `
 				<h3>
 					Trajet du ${escapeHTML(formattedDateTime)} → ${escapeHTML(trajet.duree_formatee)}
-					${trajet.deja_participe == 1 ? '<span class="badge bg-success ms-2">Déjà inscrit</span>' : ''}
 				</h3>
 				<p><strong>Départ :</strong> ${escapeHTML(trajet.adresse_depart)}</p>
 				<p><strong>Arrivée :</strong> ${escapeHTML(trajet.adresse_arrivee)}</p>

@@ -216,9 +216,6 @@ if ($is_ajax) {
 								⭐ <?= $trajet['note_moyenne'] ?>/5
 							</span>
 						<?php endif; ?>
-						<?php if (!empty($trajet['deja_participe'])): ?>
-							<span class="badge bg-info ms-2">Déjà inscrit ✅</span>
-						<?php endif; ?>
 					</h5>
                     <p class="card-text mb-1">
                         <strong>Départ :</strong> <?= htmlspecialchars($trajet['adresse_depart']) ?><br>
