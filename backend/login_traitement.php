@@ -146,7 +146,7 @@ try {
             'success' => true,
             'message' => 'Connexion réussie ! Vous allez être redirigé...'
         ];
-        if (!empty($next) && $redirect !== '/frontend/index.php') {
+        if (!empty($next) && $redirect !== '/frontend/espace-client.php') {
             $payload['redirect'] = $redirect;
         }
         echo json_encode($payload);

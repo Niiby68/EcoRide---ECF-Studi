@@ -43,12 +43,8 @@ require_once('includes/en-tete.php');
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 	
-	<!-- Fallback CSS si JS désactivé -->
-    <noscript>
-		<style>
-			#bloc-filtres { display: block !important; }
-		</style>
-	</noscript>
+	<!-- JS pour AJAX -->
+	<script src="js/espace-client.js" defer></script>
 </head>
 
 <body>
@@ -67,9 +63,35 @@ require_once('includes/en-tete.php');
 			</ol>
 		</nav>
 	</div>
-
-    <main class="container">
+	
+	<!-- Conteneur principal -->
+    <main class="container espace-client mb-5">
         <h1 class="mb-4">Mon Compte</h1>
+
+        <!-- Wrapper principal -->
+        <div class="client-wrapper">
+
+            <!-- Sidebar pour PC -->
+            <aside class="client-sidebar">
+                <ul>
+                    <li><a href="#" data-ajax="compte" class="active">Mon Compte</a></li>
+                    <li><a href="#" data-ajax="chauffeur">Espace Chauffeur</a></li>
+                    <li><a href="#" data-ajax="passager">Espace Passager</a></li>
+                </ul>
+            </aside>
+
+            <!-- Menu déroulant pour mobile et tablette -->
+            <div class="client-select">
+                <select id="nav-client" class="form-select">
+                    <option value="compte" selected>Mon Compte</option>
+                    <option value="chauffeur">Chauffeur</option>
+                    <option value="passager">Passager</option>
+                </select>
+            </div>
+
+            <!-- Zone de contenu -->
+            <section id="contenu-dynamique" class="client-content"></section>
+        </div>
     </main>
 	
 	<!-- Footer -->

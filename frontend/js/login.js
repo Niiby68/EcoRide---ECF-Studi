@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
           messageBox.classList.add('alert-success');
           messageTxt.textContent = data.message;
 
-          const target = data.redirect || 'index.php';
+          const target = data.redirect || 'espace-client.php';
           setTimeout(() => {
             window.location.href = target;
           }, 1500);
