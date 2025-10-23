@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //  Recherche de covoiturages ( Traitement )
 //  Chemin : /backend/recherche-covoiturages.php

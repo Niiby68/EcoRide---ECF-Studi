@@ -47,10 +47,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 mainTitle.textContent = 'Mon Compte';
                 break;
             case 'chauffeur':
-                mainTitle.textContent = 'Espace Chauffeur';
+                mainTitle.textContent = 'Chauffeur';
                 break;
             case 'passager':
-                mainTitle.textContent = 'Espace Passager';
+                mainTitle.textContent = 'Passager';
                 break;
             default:
                 mainTitle.textContent = 'Mon Compte';

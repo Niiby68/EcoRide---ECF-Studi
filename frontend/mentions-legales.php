@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //  Page des Mentions légales
 //  Chemin : /frontend/mentions-legales.php

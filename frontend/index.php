@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //  Page d'accueil
 //  Chemin : /frontend/index.php

@@ -16,7 +16,6 @@ CREATE TABLE utilisateurs (
     mot_de_passe VARCHAR(255) NOT NULL,
     photo VARCHAR(255) DEFAULT NULL,
     credits INT DEFAULT 20,
-    role ENUM('passager', 'chauffeur', 'les_deux') DEFAULT 'passager',
     date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
     actif BOOLEAN DEFAULT TRUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

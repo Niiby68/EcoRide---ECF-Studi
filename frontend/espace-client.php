@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //  Espace client
 //  Chemin : /frontend/espace-client.php
@@ -59,7 +63,7 @@ require_once('includes/en-tete.php');
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="index.php">Accueil</a></li>
-				<li class="breadcrumb-item active" aria-current="page">Mon Compte</li>
+				<li class="breadcrumb-item active" aria-current="page">Espace Client</li>
 			</ol>
 		</nav>
 	</div>
@@ -75,8 +79,8 @@ require_once('includes/en-tete.php');
             <aside class="client-sidebar">
                 <ul>
                     <li><a href="#" data-ajax="compte" class="active">Mon Compte</a></li>
-                    <li><a href="#" data-ajax="chauffeur">Espace Chauffeur</a></li>
-                    <li><a href="#" data-ajax="passager">Espace Passager</a></li>
+                    <li><a href="#" data-ajax="chauffeur">Chauffeur</a></li>
+                    <li><a href="#" data-ajax="passager">Passager</a></li>
                 </ul>
             </aside>
 

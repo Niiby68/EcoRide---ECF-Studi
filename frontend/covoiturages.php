@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //  Page des Covoiturages
 //  Chemin : /frontend/covoiturage.php

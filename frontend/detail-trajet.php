@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //  Page de Détail d'un Trajet
 //  Chemin : /frontend/detail-trajet.php

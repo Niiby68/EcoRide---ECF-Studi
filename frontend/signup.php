@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //	Page d'Inscription
 //	Chemin : /frontend/signup.php
@@ -107,14 +111,6 @@ if (empty($_SESSION['csrf_token'])) {
 					<div class="mb-3">
 						<label for="mot_de_passe" class="form-label">Mot de passe</label>
 						<input type="password" class="form-control" id="mot_de_passe" name="mot_de_passe" required>
-					</div>
-					<div class="mb-3">
-						<label for="role" class="form-label">Rôle</label>
-						<select class="form-select" id="role" name="role" required>
-							<option value="passager">Passager</option>
-							<option value="chauffeur">Chauffeur</option>
-							<option value="les_deux">Les deux</option>
-						</select>
 					</div>
 					<?php
 					// Génération du captcha de base

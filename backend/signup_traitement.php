@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //	Page d'inscription ( Traitement )
 //	Chemin : /backend/signup_traitement.php
@@ -13,6 +17,7 @@ session_start();
 //
 //  Fichiers additionnels
 //
+require_once '../config/db.php';
 require_once 'models/Utilisateur.php';
 
 
@@ -21,7 +26,7 @@ require_once 'models/Utilisateur.php';
 // Autoriser uniquement POST
 //
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Method Not Allowed
+    http_response_code(405);
     exit('Méthode non autorisée.');
 }
 
@@ -30,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 //
 // Vérification du token CSRF
 //
-if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+if (empty($_POST['csrf_token']) || empty($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
     http_response_code(403); // Forbidden
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
         header('Content-Type: application/json');
@@ -56,25 +61,23 @@ $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTT
 $response = ['success' => false, 'message' => 'Une erreur est survenue.'];
 
 try {
-    $pdo = new PDO('mysql:host=localhost;dbname=ecoride;charset=utf8', 'root', '', [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    ]);
-
     $pseudo = $_POST['pseudo'] ?? '';
     $email = $_POST['email'] ?? '';
     $password = $_POST['mot_de_passe'] ?? '';
-    $role = $_POST['role'] ?? '';
 	$next = $_POST['next'] ?? '';
 	
 	// Vérification du captcha
-	if (!isset($_POST['captcha']) || $_POST['captcha'] != ($_SESSION['captcha_result'] ?? null)) {
+	$captcha_user = (string)($_POST['captcha'] ?? '');
+	$captcha_session = (string)($_SESSION['captcha_result'] ?? '');
+	unset($_SESSION['captcha_result']);
+
+	if ($captcha_user !== $captcha_session) {
 		throw new Exception("Vérification anti-robot échouée.");
 	}
-	unset($_SESSION['captcha_result']);
 
     $user = new Utilisateur();
 
-    if (!$user->set_pseudo($pseudo) || !$user->set_email($email) || !$user->set_password($password) || !$user->set_role($role)) {
+    if (!$user->set_pseudo($pseudo) || !$user->set_email($email) || !$user->set_password($password)) {
         throw new Exception('Certains champs ne sont pas valides. Vérifiez vos informations.');
     }
 

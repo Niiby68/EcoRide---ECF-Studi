@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //	Page de connexion
 //	Chemin : /frontend/login.php

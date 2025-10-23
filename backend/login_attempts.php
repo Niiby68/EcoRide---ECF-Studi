@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //  Gestion des tentatives de connexion par IP
 //  Chemin : /backend/login_attempts.php

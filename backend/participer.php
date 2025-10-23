@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+
+
 //
 //  Participation à un trajet
 //  Chemin : /backend/participer.php
