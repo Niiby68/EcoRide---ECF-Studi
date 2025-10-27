@@ -22,6 +22,9 @@ class Utilisateur {
 	private $motdepasse;
 	private $hashpass;
 	private $photo;
+	private $credits;
+	private $date_inscription;
+	private $actif;
 
 
 
@@ -58,6 +61,18 @@ class Utilisateur {
 		$this->photo = trim($fichier);
 		return true;
 	}
+	
+	public function set_credits(int $valeur): bool {
+		if ($valeur < 0) return false; // pas de valeur négative
+		$this->credits = $valeur;
+		return true;
+	}
+
+	public function set_actif(int $statut): bool {
+		if (!in_array($statut, [0, 1], true)) return false;
+		$this->actif = $statut;
+		return true;
+	}
 
 
 
@@ -67,24 +82,36 @@ class Utilisateur {
 		return $this->id;
 	}
 
-	public function get_pseudo() {
+	public function get_pseudo(): ?string {
 		return $this->pseudo;
 	}
 
-	public function get_email() {
+	public function get_email(): ?string {
 		return $this->email;
 	}
 
-	public function get_password() {
+	public function get_password(): ?string {
 		return $this->motdepasse;
 	}
 	
-	public function get_hashpass() {
+	public function get_hashpass(): ?string {
 		return $this->hashpass;
 	}
 
-	public function get_photo() {
+	public function get_photo(): ?string {
 		return $this->photo;
+	}
+	
+	public function get_credits(): ?int {
+		return $this->credits;
+	}
+
+	public function get_date_inscription(): ?string {
+		return $this->date_inscription;
+	}
+
+	public function get_actif(): ?int {
+		return $this->actif;
 	}
 
 
@@ -109,14 +136,24 @@ class Utilisateur {
 
 	// Ajoute l'utilisateur dans la BDD
 	public function add_user(PDO $pdo): bool {
-		$sql = "INSERT INTO utilisateurs (pseudo, email, mot_de_passe) 
-		        VALUES (:pseudo, :email, :motdepasse)";
+		$sql = "INSERT INTO utilisateurs (pseudo, email, mot_de_passe, photo, credits, actif) VALUES (:pseudo, :email, :motdepasse, :photo, :credits, :actif)";
 		$stmt = $pdo->prepare($sql);
+
+		// Hash du mot de passe
 		$hash = password_hash($this->motdepasse, PASSWORD_DEFAULT);
+
+		// Valeurs par défaut à l'inscription
+		$this->photo   = 'defaut.png';
+		$this->credits = 20;
+		$this->actif   = 1;
+
 		return $stmt->execute([
 			':pseudo'     => $this->pseudo,
 			':email'      => $this->email,
-			':motdepasse' => $hash
+			':motdepasse' => $hash,
+			':photo'      => $this->photo,
+			':credits'    => $this->credits,
+			':actif'      => $this->actif
 		]);
 	}
 	
@@ -130,11 +167,14 @@ class Utilisateur {
 		$data = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		if ($data) {
-			$this->id		 = $data['id'];
-			$this->pseudo    = $data['pseudo'];
-			$this->email     = $data['email'];
-			$this->hashpass  = $data['mot_de_passe'];
-			$this->photo     = $data['photo'] ?? null;
+			$this->id               = (int)$data['id'];
+			$this->pseudo           = $data['pseudo'];
+			$this->email            = $data['email'];
+			$this->hashpass         = $data['mot_de_passe'];
+			$this->photo            = $data['photo'] ?? null;
+			$this->credits = isset($data['credits']) ? (int)$data['credits'] : 0;
+			$this->date_inscription = $data['date_inscription'] ?? null;
+			$this->actif            = isset($data['actif']) ? (int)$data['actif'] : 1;
 			return true;
 		}
 
@@ -149,11 +189,14 @@ class Utilisateur {
 		$data = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		if ($data) {
-			$this->id		 = $data['id'];
-			$this->pseudo    = $data['pseudo'];
-			$this->email     = $data['email'];
-			$this->hashpass  = $data['mot_de_passe'];
-			$this->photo     = $data['photo'] ?? null;
+			$this->id               = (int)$data['id'];
+			$this->pseudo           = $data['pseudo'];
+			$this->email            = $data['email'];
+			$this->hashpass         = $data['mot_de_passe'];
+			$this->photo            = $data['photo'] ?? null;
+			$this->credits = isset($data['credits']) ? (int)$data['credits'] : 0;
+			$this->date_inscription = $data['date_inscription'] ?? null;
+			$this->actif            = isset($data['actif']) ? (int)$data['actif'] : 1;
 			return true;
 		}
 
@@ -167,6 +210,17 @@ class Utilisateur {
 		$stmt = $pdo->prepare($sql);
 		return $stmt->execute([
 			':photo' => $this->photo,
+			':id'    => $this->id
+		]);
+	}
+
+	// Met à jour le statut du compte (0 = suspendu, 1 = actif)
+	public function update_statut(PDO $pdo): bool {
+		if (!$this->id) return false;
+		$sql = "UPDATE utilisateurs SET actif = :actif WHERE id = :id";
+		$stmt = $pdo->prepare($sql);
+		return $stmt->execute([
+			':actif' => $this->actif,
 			':id'    => $this->id
 		]);
 	}
