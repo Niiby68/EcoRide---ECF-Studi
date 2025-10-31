@@ -7,17 +7,21 @@ declare(strict_types=1);
 //  Page de connexion ( Traitement )
 //  Chemin : /backend/login_traitement.php
 //
+$chemin_racine = '../';
 
 
 
-session_start();
+//
+//	Initialisation de la session
+//
+require_once $chemin_racine . 'config/session_init.php';
 
 
 
 //
 //  Fichiers additionnels
 //
-require_once '../config/db.php';
+require_once $chemin_racine . 'config/db.php';
 require_once 'login_attempts.php';
 require_once 'models/Utilisateur.php';
 
@@ -44,7 +48,7 @@ if (empty($_POST['csrf_token']) || empty($_SESSION['csrf_token']) || !hash_equal
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => 'Échec de la vérification CSRF.']);
     } else {
-        header("Location: ../frontend/login.php?error=" . urlencode("Votre session a expiré, merci de recharger la page."));
+        header('Location: ' . $chemin_racine . 'frontend/login.php?error=' . urlencode('Votre session a expiré, merci de recharger la page.'));
     }
     exit;
 }
@@ -76,7 +80,7 @@ try {
 			]);
 		} else {
 			$msg = urlencode('Trop de tentatives. Réessayez dans ' . $minutes . ' minute(s).');
-			header("Location: ../frontend/login.php?error=$msg");
+			header('Location: ' . $chemin_racine . 'frontend/login.php?error=$msg');
 		}
 		exit;
 	}
@@ -108,7 +112,7 @@ try {
 	}
 
 	// Vérification du mot de passe
-	if (!password_verify($password, $userObj->get_hashpass())) {
+	if (!password_verify($password, $userObj->get_motdepasse())) {
 		record_failed_attempt($pdo, $client_ip);
 		throw new Exception('Mot de passe incorrect. Veuillez réessayer.');
 	}
@@ -163,7 +167,7 @@ try {
         exit;
     } else {
         $msg = urlencode($e->getMessage());
-        header("Location: ../frontend/login.php?error=$msg");
+        header('Location: ' . $chemin_racine . 'frontend/login.php?error=$msg');
         exit;
     }
 }

@@ -7,18 +7,22 @@ declare(strict_types=1);
 //  Recherche de covoiturages ( Traitement )
 //  Chemin : /backend/recherche-covoiturages.php
 //
+$chemin_racine = '../';
 
 
 
-session_start();
+//
+//	Initialisation de la session
+//
+require_once $chemin_racine . 'config/session_init.php';
 
 
 
 //
 //  Fichiers additionnels
 //
-require_once '../config/db.php';
-require_once '../frontend/includes/modif-duree.php';
+require_once $chemin_racine . 'config/db.php';
+require_once $chemin_racine . 'frontend/includes/modif-duree.php';
 
 
 
@@ -56,24 +60,24 @@ try {
 	$date    = trim($_POST['date'] ?? $_GET['date'] ?? '');
 
     if ($depart === '' || $arrivee === '' || $date === '') {
-        throw new Exception("Tous les champs sont requis.");
+        throw new Exception('Tous les champs sont requis.');
     }
 
     if (!preg_match("/^[\p{L}0-9\s'\-]+$/u", $depart)) {
-        throw new Exception("Ville de départ invalide.");
+        throw new Exception('Ville de départ invalide.');
     }
     if (!preg_match("/^[\p{L}0-9\s'\-]+$/u", $arrivee)) {
-        throw new Exception("Ville d'arrivée invalide.");
+        throw new Exception('Ville d\'arrivée invalide.');
     }
 
     $dateObj = DateTime::createFromFormat('Y-m-d', $date);
     if (!$dateObj || $dateObj->format('Y-m-d') !== $date) {
-        throw new Exception("Veuillez entrer une date valide (exemple : 15/09/2025).");
+        throw new Exception('Veuillez entrer une date valide (exemple : 15/09/2025).');
     }
 
     $today = new DateTime('today');
     if ($dateObj < $today) {
-        throw new Exception("La date de départ ne peut pas être antérieure à aujourd’hui.");
+        throw new Exception('La date de départ ne peut pas être antérieure à aujourd’hui.');
     }
 
 
@@ -203,11 +207,11 @@ if ($is_ajax) {
     header('Content-Type: text/html; charset=UTF-8');
 
     if (!$response['success']) {
-        echo "<div class='alert alert-danger text-center'>"
+        echo '<div class="alert alert-danger text-center">'
            . htmlspecialchars($response['message'], ENT_QUOTES, 'UTF-8')
-           . "</div>";
+           . '</div>';
     } elseif (empty($response['resultats'])) {
-        echo "<div class='alert alert-warning text-center'>Aucun trajet trouvé pour votre recherche.</div>";
+        echo '<div class="alert alert-warning text-center">Aucun trajet trouvé pour votre recherche.</div>';
     } else {
         foreach ($response['resultats'] as $trajet) {
             ?>

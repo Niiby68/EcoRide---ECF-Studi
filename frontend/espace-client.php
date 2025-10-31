@@ -7,11 +7,14 @@ declare(strict_types=1);
 //  Espace client
 //  Chemin : /frontend/espace-client.php
 //
-
-
-
-session_start();
 $chemin_racine = '../';
+
+
+
+//
+//	Initialisation de la session
+//
+require_once $chemin_racine . 'config/session_init.php';
 $is_connected = isset($_SESSION['user_id']);
 
 

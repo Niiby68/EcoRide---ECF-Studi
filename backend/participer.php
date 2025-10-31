@@ -7,17 +7,21 @@ declare(strict_types=1);
 //  Participation à un trajet
 //  Chemin : /backend/participer.php
 //
+$chemin_racine = '../';
 
 
 
-session_start();
+//
+//	Initialisation de la session
+//
+require_once $chemin_racine . 'config/session_init.php';
 
 
 
 //
 //  Fichiers additionnels
 //
-require_once('../config/db.php');
+require_once($chemin_racine . 'config/db.php');
 
 
 
@@ -30,7 +34,7 @@ if (!isset($_SESSION['user_id'])) {
     }
     $sep = str_contains($redirect, '?') ? '&' : '?';
 
-    header("Location: {$redirect}{$sep}erreur=nonco");
+    header('Location: ' . $redirect . $sep . 'erreur=nonco');
     exit;
 }
 
@@ -42,7 +46,7 @@ $user_id = (int) $_SESSION['user_id'];
 // Vérification de la méthode
 //
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Method Not Allowed
+    http_response_code(405);
     exit('Méthode non autorisée.');
 }
 
@@ -53,11 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 //
 if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
     if (!empty($_POST['trajet_id'])) {
-        $redirect = "/frontend/detail-trajet.php?id=" . (int)$_POST['trajet_id'];
+        $redirect = '/frontend/detail-trajet.php?id=' . (int)$_POST['trajet_id'];
     } else {
-        $redirect = "/frontend/covoiturages.php";
+        $redirect = '/frontend/covoiturages.php';
     }
-    header("Location: {$redirect}?erreur=csrf");
+    header('Location: ' . $redirect . '?erreur=csrf');
     exit;
 }
 
@@ -78,7 +82,7 @@ $sep = (str_contains($redirect, '?')) ? '&' : '?';
 // Récupération et validation du trajet_id
 $trajet_id = isset($_POST['trajet_id']) ? (int) $_POST['trajet_id'] : 0;
 if (!$trajet_id) {
-    header("Location: {$redirect}{$sep}erreur=trajet");
+    header('Location: ' . $redirect . $sep . 'erreur=trajet');
     exit;
 }
 
@@ -95,7 +99,7 @@ $stmt->execute([':id' => $trajet_id]);
 $trajet = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$trajet) {
-    header("Location: {$redirect}{$sep}erreur=trajet");
+    header('Location: ' . $redirect . $sep . 'erreur=trajet');
     exit;
 }
 
@@ -103,7 +107,7 @@ if (!$trajet) {
 
 // Empêcher le chauffeur de s'inscrire à son propre trajet
 if ((int)$trajet['chauffeur_id'] === $user_id) {
-    header("Location: {$redirect}{$sep}erreur=chauffeur");
+    header('Location: ' . $redirect . $sep . 'erreur=chauffeur');
     exit;
 }
 
@@ -113,7 +117,7 @@ if ((int)$trajet['chauffeur_id'] === $user_id) {
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM participations WHERE utilisateur_id = :uid AND trajet_id = :tid");
 $stmt->execute([':uid' => $user_id, ':tid' => $trajet_id]);
 if ($stmt->fetchColumn() > 0) {
-    header("Location: {$redirect}{$sep}erreur=deja");
+    header('Location: ' . $redirect . $sep . 'erreur=deja');
     exit;
 }
 
@@ -133,7 +137,7 @@ try {
 
     if ($stmt->rowCount() !== 1) {
         $pdo->rollBack();
-        header("Location: {$redirect}{$sep}erreur=credits");
+        header('Location: ' . $redirect . $sep . 'erreur=credits');
         exit;
     }
 
@@ -147,7 +151,7 @@ try {
 
     if ($stmt->rowCount() !== 1) {
         $pdo->rollBack();
-        header("Location: {$redirect}{$sep}erreur=places");
+        header('Location: ' . $redirect . $sep . 'erreur=places');
         exit;
     }
 
@@ -160,14 +164,14 @@ try {
 
     $pdo->commit();
 
-    header("Location: {$redirect}{$sep}succes=ok");
+    header('Location: ' . $redirect . $sep . 'succes=ok');
     exit;
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    error_log("Erreur participation : " . $e->getMessage());
-    header("Location: {$redirect}{$sep}erreur=exception");
+    error_log('Erreur participation : ' . $e->getMessage());
+    header('Location: ' . $redirect . $sep . 'erreur=exception');
     exit;
 }

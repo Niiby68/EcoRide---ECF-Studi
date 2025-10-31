@@ -7,11 +7,14 @@ declare(strict_types=1);
 //  Page des Mentions légales
 //  Chemin : /frontend/mentions-legales.php
 //
-
-
-
-session_start();
 $chemin_racine = '../';
+
+
+
+//
+//	Initialisation de la session
+//
+require_once $chemin_racine . 'config/session_init.php';
 $is_connected = isset($_SESSION['user_id']);
 
 

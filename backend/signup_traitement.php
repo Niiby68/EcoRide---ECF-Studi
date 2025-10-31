@@ -7,17 +7,21 @@ declare(strict_types=1);
 //	Page d'inscription ( Traitement )
 //	Chemin : /backend/signup_traitement.php
 //
+$chemin_racine = '../';
 
 
 
-session_start();
+//
+//	Initialisation de la session
+//
+require_once $chemin_racine . 'config/session_init.php';
 
 
 
 //
 //  Fichiers additionnels
 //
-require_once '../config/db.php';
+require_once $chemin_racine . 'config/db.php';
 require_once 'models/Utilisateur.php';
 
 
@@ -41,7 +45,7 @@ if (empty($_POST['csrf_token']) || empty($_SESSION['csrf_token']) || !hash_equal
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => 'Échec de la vérification CSRF.']);
     } else {
-        header("Location: ../frontend/signup.php?error=" . urlencode("Votre session a expiré, merci de recharger la page."));
+        header('Location: ' . $chemin_racine . 'frontend/signup.php?error=' . urlencode('Votre session a expiré, merci de recharger la page.'));
     }
     exit;
 }
@@ -72,12 +76,12 @@ try {
 	unset($_SESSION['captcha_result']);
 
 	if ($captcha_user !== $captcha_session) {
-		throw new Exception("Vérification anti-robot échouée.");
+		throw new Exception('Vérification anti-robot échouée.');
 	}
 
     $user = new Utilisateur();
 
-    if (!$user->set_pseudo($pseudo) || !$user->set_email($email) || !$user->set_password($password)) {
+    if (!$user->set_pseudo($pseudo) || !$user->set_email($email) || !$user->set_motdepasse($password)) {
         throw new Exception('Certains champs ne sont pas valides. Vérifiez vos informations.');
     }
 
@@ -93,7 +97,7 @@ try {
         throw new Exception('Un problème est survenu lors de l\'inscription. Veuillez réessayer.');
     }
 
-	$redirect = '../frontend/login.php';
+	$redirect = $chemin_racine . 'frontend/login.php';
 	if (!empty($next)) {
 		$parts  = parse_url($next);
 		$path   = $parts['path']  ?? '';
@@ -116,9 +120,9 @@ try {
     }
 
 	// Réponse classique (sans AJAX)
-	if ($redirect === '../frontend/login.php') {
+	if ($redirect === $chemin_racine . 'frontend/login.php') {
 		// Succès standard : on redirige avec un message
-		header('Location: '.$redirect.'?success=' . urlencode("Inscription réussie ! Vous pouvez maintenant vous connecter."));
+		header('Location: '.$redirect.'?success=' . urlencode('Inscription réussie ! Vous pouvez maintenant vous connecter.'));
 	} else {
 		// Cas d’un redirect spécifique via "next"
 		header('Location: '.$redirect);
@@ -132,7 +136,7 @@ try {
         exit;
     } else {
         $msg = urlencode($e->getMessage());
-        header("Location: ../frontend/signup.php?error=$msg");
+        header('Location: ' . $chemin_racine . 'frontend/signup.php?error=$msg');
         exit;
     }
 }

@@ -16,22 +16,26 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
 
 
 class Utilisateur {
-	private $id;
-	private $pseudo;
-	private $email;
-	private $motdepasse;
-	private $hashpass;
-	private $photo;
-	private $credits;
-	private $date_inscription;
-	private $actif;
+	private ?int $id = null;
+	private ?string $pseudo = null;
+	private ?string $email = null;
+	private ?string $motdepasse = null;
+	private ?string $photo = null;
+	private ?int $credits = null;
+	private ?string $date_inscription = null;
+	private ?int $actif = null;
+	
+	private const DEFAULT_PHOTO   = 'defaut.png';
+	private const DEFAULT_CREDITS = 20;
+	private const STATUS_ACTIVE   = 1;
 
 
 
 	// ======= SETTERS =======
 
-	public function set_id(int $id): void {
+	public function set_id(int $id): bool {
 		$this->id = $id;
+		return true;
 	}
 
 	public function set_pseudo(string $texte): bool {
@@ -44,26 +48,27 @@ class Utilisateur {
 
 	public function set_email(string $texte): bool {
 		$texte = trim($texte);
-		if (strlen($texte) > 255) return false;
+		if (strlen($texte) > 100) return false;
 		if (!filter_var($texte, FILTER_VALIDATE_EMAIL)) return false;
 		$this->email = $texte;
 		return true;
 	}
 
-	public function set_password(string $texte): bool {
+	public function set_motdepasse(string $texte): bool {
 		if (strlen($texte) < 6) return false;
-		$this->motdepasse = $texte;
+		$this->motdepasse = password_hash($texte, PASSWORD_DEFAULT);
 		return true;
 	}
 
 	public function set_photo(string $fichier): bool {
-		if (strlen($fichier) > 100) return false;
-		$this->photo = trim($fichier);
+		$fichier = trim(basename($fichier));
+		if ($fichier === '' || strlen($fichier) > 100) return false;
+		$this->photo = $fichier;
 		return true;
 	}
 	
 	public function set_credits(int $valeur): bool {
-		if ($valeur < 0) return false; // pas de valeur négative
+		if ($valeur < 0) return false;
 		$this->credits = $valeur;
 		return true;
 	}
@@ -90,12 +95,8 @@ class Utilisateur {
 		return $this->email;
 	}
 
-	public function get_password(): ?string {
+	public function get_motdepasse(): ?string {
 		return $this->motdepasse;
-	}
-	
-	public function get_hashpass(): ?string {
-		return $this->hashpass;
 	}
 
 	public function get_photo(): ?string {
@@ -120,41 +121,54 @@ class Utilisateur {
 
 	// Vérifie si l'email de l'utilisateur est déjà utilisé
 	public function is_user_exist(PDO $pdo): bool {
+		if (!$this->email) return false;
+		
 		$sql = "SELECT COUNT(*) FROM utilisateurs WHERE email = :email";
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute([':email' => $this->email]);
-		return $stmt->fetchColumn() > 0;
+		
+		return (bool)$stmt->fetchColumn();
 	}
 	
 	// Vérifie si le pseudo de l'utilisateur est déjà utilisé
 	public function is_pseudo_exist(PDO $pdo): bool {
+		if (!$this->pseudo) return false;
+		
 		$sql = "SELECT COUNT(*) FROM utilisateurs WHERE pseudo = :pseudo";
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute([':pseudo' => $this->pseudo]);
-		return $stmt->fetchColumn() > 0;
+		
+		return (bool)$stmt->fetchColumn();
 	}
 
 	// Ajoute l'utilisateur dans la BDD
 	public function add_user(PDO $pdo): bool {
+		if (!$this->pseudo || !$this->email || !$this->motdepasse) return false;
+		
 		$sql = "INSERT INTO utilisateurs (pseudo, email, mot_de_passe, photo, credits, actif) VALUES (:pseudo, :email, :motdepasse, :photo, :credits, :actif)";
 		$stmt = $pdo->prepare($sql);
 
-		// Hash du mot de passe
-		$hash = password_hash($this->motdepasse, PASSWORD_DEFAULT);
-
 		// Valeurs par défaut à l'inscription
-		$this->photo   = 'defaut.png';
-		$this->credits = 20;
-		$this->actif   = 1;
+		$this->photo = self::DEFAULT_PHOTO;
+		$this->credits = self::DEFAULT_CREDITS;
+		$this->actif = self::STATUS_ACTIVE;
 
-		return $stmt->execute([
-			':pseudo'     => $this->pseudo,
-			':email'      => $this->email,
-			':motdepasse' => $hash,
-			':photo'      => $this->photo,
-			':credits'    => $this->credits,
-			':actif'      => $this->actif
+		$ok = $stmt->execute([
+			':pseudo' => $this->pseudo,
+			':email' => $this->email,
+			':motdepasse' => $this->motdepasse,
+			':photo' => $this->photo,
+			':credits' => $this->credits,
+			':actif' => $this->actif
 		]);
+		
+		if($ok)
+		{
+			$this->id = (int)$pdo->lastInsertId();
+			return true;
+		}
+		
+		return false;
 	}
 	
 	// Charge les données de l'utilisateur en utilisant son ID
@@ -167,14 +181,14 @@ class Utilisateur {
 		$data = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		if ($data) {
-			$this->id               = (int)$data['id'];
-			$this->pseudo           = $data['pseudo'];
-			$this->email            = $data['email'];
-			$this->hashpass         = $data['mot_de_passe'];
-			$this->photo            = $data['photo'] ?? null;
+			$this->id = (int)$data['id'];
+			$this->pseudo = $data['pseudo'];
+			$this->email = $data['email'];
+			$this->motdepasse = $data['mot_de_passe'];
+			$this->photo = $data['photo'] ?? null;
 			$this->credits = isset($data['credits']) ? (int)$data['credits'] : 0;
 			$this->date_inscription = $data['date_inscription'] ?? null;
-			$this->actif            = isset($data['actif']) ? (int)$data['actif'] : 1;
+			$this->actif = isset($data['actif']) ? (int)$data['actif'] : 1;
 			return true;
 		}
 
@@ -183,20 +197,22 @@ class Utilisateur {
 
 	// Charge les données de l'utilisateur en utilisant son email
 	public function load_user_by_email(PDO $pdo): bool {
+		if (!$this->email) return false;
+		
 		$sql = "SELECT * FROM utilisateurs WHERE email = :email";
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute([':email' => $this->email]);
 		$data = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		if ($data) {
-			$this->id               = (int)$data['id'];
-			$this->pseudo           = $data['pseudo'];
-			$this->email            = $data['email'];
-			$this->hashpass         = $data['mot_de_passe'];
-			$this->photo            = $data['photo'] ?? null;
+			$this->id = (int)$data['id'];
+			$this->pseudo = $data['pseudo'];
+			$this->email = $data['email'];
+			$this->motdepasse = $data['mot_de_passe'];
+			$this->photo = $data['photo'] ?? null;
 			$this->credits = isset($data['credits']) ? (int)$data['credits'] : 0;
 			$this->date_inscription = $data['date_inscription'] ?? null;
-			$this->actif            = isset($data['actif']) ? (int)$data['actif'] : 1;
+			$this->actif = isset($data['actif']) ? (int)$data['actif'] : 1;
 			return true;
 		}
 
@@ -206,22 +222,39 @@ class Utilisateur {
 	// Met à jour la photo de l'utilisateur dans la BDD
 	public function update_photo(PDO $pdo): bool {
 		if (!$this->id) return false;
+		
 		$sql = "UPDATE utilisateurs SET photo = :photo WHERE id = :id";
 		$stmt = $pdo->prepare($sql);
+		
 		return $stmt->execute([
 			':photo' => $this->photo,
-			':id'    => $this->id
+			':id' => $this->id
 		]);
 	}
 
 	// Met à jour le statut du compte (0 = suspendu, 1 = actif)
 	public function update_statut(PDO $pdo): bool {
 		if (!$this->id) return false;
+		
 		$sql = "UPDATE utilisateurs SET actif = :actif WHERE id = :id";
 		$stmt = $pdo->prepare($sql);
+		
 		return $stmt->execute([
 			':actif' => $this->actif,
-			':id'    => $this->id
+			':id' => $this->id
+		]);
+	}
+	
+	// Met à jour le montant des crédits
+	public function update_credits(PDO $pdo): bool {
+		if (!$this->id) return false;
+		
+		$sql = "UPDATE utilisateurs SET credits = :credits WHERE id = :id";
+		$stmt = $pdo->prepare($sql);
+		
+		return $stmt->execute([
+			':credits' => $this->credits,
+			':id' => $this->id
 		]);
 	}
 }

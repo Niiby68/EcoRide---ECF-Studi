@@ -7,11 +7,14 @@ declare(strict_types=1);
 //  Page de Détail d'un Trajet
 //  Chemin : /frontend/detail-trajet.php
 //
-
-
-
-session_start();
 $chemin_racine = '../';
+
+
+
+//
+//	Initialisation de la session
+//
+require_once $chemin_racine . 'config/session_init.php';
 $is_connected = isset($_SESSION['user_id']);
 
 
@@ -19,7 +22,7 @@ $is_connected = isset($_SESSION['user_id']);
 //
 //  Fichiers additionnels
 //
-require_once('../config/db.php');
+require_once($chemin_racine . 'config/db.php');
 require_once('includes/en-tete.php');
 require_once('includes/pied-de-page.php');
 require_once('includes/modif-duree.php');

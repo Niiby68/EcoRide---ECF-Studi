@@ -7,16 +7,18 @@ declare(strict_types=1);
 //	Page d'Inscription
 //	Chemin : /frontend/signup.php
 //
+$chemin_racine = '../';
 
 
 
-session_start();
+//
+//	Initialisation de la session
+//
+require_once $chemin_racine . 'config/session_init.php';
 if (isset($_SESSION['user_id'])) {
 	header('Location: index.php');
 	exit;
 }
-
-$chemin_racine = '../';
 
 
 
