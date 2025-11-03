@@ -29,7 +29,11 @@ require_once $chemin_racine . 'frontend/includes/modif-duree.php';
 //
 // Vérifie si un utilisateur est connecté
 //
-$user_id = $_SESSION['user_id'] ?? null;
+if (isset($_SESSION['user_id'])) {
+    $user_id = (int)$_SESSION['user_id'];
+} else {
+    $user_id = null;
+}
 
 
 

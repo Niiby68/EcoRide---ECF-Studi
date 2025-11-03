@@ -80,7 +80,7 @@ try {
 			]);
 		} else {
 			$msg = urlencode('Trop de tentatives. Réessayez dans ' . $minutes . ' minute(s).');
-			header('Location: ' . $chemin_racine . 'frontend/login.php?error=$msg');
+			header('Location: ' . $chemin_racine . 'frontend/login.php?error=' . $msg);
 		}
 		exit;
 	}
@@ -167,7 +167,7 @@ try {
         exit;
     } else {
         $msg = urlencode($e->getMessage());
-        header('Location: ' . $chemin_racine . 'frontend/login.php?error=$msg');
+        header('Location: ' . $chemin_racine . 'frontend/login.php?error=' . $msg);
         exit;
     }
 }

@@ -136,7 +136,7 @@ try {
         exit;
     } else {
         $msg = urlencode($e->getMessage());
-        header('Location: ' . $chemin_racine . 'frontend/signup.php?error=$msg');
+        header('Location: ' . $chemin_racine . 'frontend/signup.php?error=' . $msg);
         exit;
     }
 }

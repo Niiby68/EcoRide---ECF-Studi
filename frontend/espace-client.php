@@ -20,6 +20,21 @@ $is_connected = isset($_SESSION['user_id']);
 
 
 //
+// Vérifie si l’utilisateur est connecté
+//
+if (empty($_SESSION['user_id'])) {
+    $message = urlencode('Vous devez être connecté pour accéder à votre espace client.');
+    header('Location: login.php?error=' . $message . '&next=' . urlencode($_SERVER['REQUEST_URI']));
+    exit;
+}
+else
+{
+	$is_connected = true;
+}
+
+
+
+//
 //  Fichiers additionnels
 //
 require_once('includes/pied-de-page.php');
@@ -34,7 +49,7 @@ require_once('includes/en-tete.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoRide - Covoiturage</title>
+    <title>EcoRide - Espace Client</title>
 
     <!-- Chargement complet des familles Roboto et Lora via Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -97,7 +112,7 @@ require_once('includes/en-tete.php');
             </div>
 
             <!-- Zone de contenu -->
-            <section id="contenu-dynamique" class="client-content"></section>
+            <section id="contenu-dynamique" class="card flex-fill p-3 text-center min-vh-25"></section>
         </div>
     </main>
 	
